@@ -1,4 +1,4 @@
-# frontend
+# focusty
 
 ## Project setup
 ```
