@@ -8,14 +8,38 @@ const routes = [
     component: HomeView,
   },
   {
-    path: "/about",
-    name: "about",
+    path: "/calendar",
+    name: "calendar",
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
+    component: () => import("../views/CalendarView.vue"),
   },
+  /*{
+    path: "/pomodoro",
+    name: "pomodoro",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import("../views/PomodoroView.vue"),
+  },*/
+
+  {
+    path: "/habits",
+    name: "habits",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import("../views/HabitView.vue"),
+  } /*
+  {
+    path: "/journey",
+    name: "journey",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import("../views/JourneyView.vue"),
+  },*/,
 ];
 
 const router = createRouter({
