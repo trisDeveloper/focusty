@@ -153,9 +153,9 @@ export default {
       &:hover {
         background-color: #30305680;
         box-sizing: content-box;
-        border-width: 0 0 0 3px;
+        border-width: 0 0 0 2px;
         border-style: solid;
-        border-image: linear-gradient(to bottom, #7a55ff, #ff4caa, #ffdc86);
+        border-image: $border-gradient;
         border-image-slice: 1;
         &:nth-child(1) svg {
           color: #97a7ff;

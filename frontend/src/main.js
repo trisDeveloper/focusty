@@ -2,6 +2,10 @@ import "./styles.scss";
 import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
+// store file vueX
+import store from "./store";
+
+// font awesome icons
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
   faBars,
@@ -11,18 +15,22 @@ import {
   faListCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faCalendarCheck } from "@fortawesome/free-regular-svg-icons";
-
+import {
+  faCalendarCheck,
+  faCheckSquare,
+} from "@fortawesome/free-regular-svg-icons";
 library.add(
   faBars,
   faHome,
   faCalendarCheck,
   faHourglass,
   faListCheck,
-  faChartLine
+  faChartLine,
+  faCheckSquare
 );
 
 const app = createApp(App);
 app.use(router);
+app.use(store);
 app.component("font-awesome-icon", FontAwesomeIcon);
 app.mount("#app");

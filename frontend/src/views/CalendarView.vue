@@ -8,25 +8,26 @@
           </div>
           <div class="daynum">{{ day.month }} {{ day.day }}</div>
         </div>
-        <div class="tasks">
-          <div v-for="task in day.tasks" :key="task.title" class="task">
-            {{ task.title }}
-          </div>
-        </div>
+        <task-list :tasks="tasks" :day="day" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import taskList from "../components/task-list.vue";
 export default {
+  components: { taskList },
   data() {
     return {
       today: new Date(),
-      isWideScreen: window.innerWidth >= 1075,
+      isWideScreen: window.innerWidth >= 1075 || window.innerWidth <= 600,
       tasks: [
-        { title: "Task 1", date: "2024-02-05" },
-        { title: "Task 2", date: "2024-02-08" },
+        { title: "Task 111111", date: "2024-02-05", done: false },
+        { title: "Task 2", date: "2024-02-08", done: false },
+        { title: "Task 3", date: "2024-02-07", done: false },
+        { title: "Task 4", date: "2024-02-07", done: false },
+        { title: "Task 0", date: "2024-02-07", done: false },
       ],
     };
   },
@@ -67,7 +68,10 @@ export default {
       return date.toLocaleDateString("en-US", { [part]: options[part] });
     },
     getTasksForDate(date) {
-      return this.tasks.filter((task) => task.date === date);
+      const tasksForDate = this.tasks.filter((task) => task.date === date);
+      return tasksForDate.sort((a, b) =>
+        a.done === b.done ? 0 : a.done ? 1 : -1
+      );
     },
     getDayColor(weekday) {
       // Add logic to determine color based on weekday
@@ -91,7 +95,7 @@ export default {
       }
     },
     handleResize() {
-      this.isWideScreen = window.innerWidth >= 1075;
+      this.isWideScreen = window.innerWidth >= 1075 || window.innerWidth <= 600;
     },
   },
   mounted() {
@@ -104,6 +108,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "./../styles.scss";
 .container {
   max-width: 1500px;
   margin: 0 auto;
@@ -137,7 +142,41 @@ export default {
     .tasks {
       padding: 5px;
       .task {
-        margin-top: 5px;
+        display: flex;
+        align-items: stretch;
+        font-size: 18px;
+        position: relative;
+        margin: 8px 0;
+        padding: 10px;
+        box-sizing: border-box;
+        $border: 1px;
+        color: #fff;
+        background: $dark-back;
+        background-clip: padding-box;
+        border: solid $border transparent;
+        border-radius: 7px;
+        .checkbox {
+          padding: 0 10px 0 0;
+          &:hover {
+            color: yellow;
+          }
+        }
+
+        &:hover {
+          background-color: #121231;
+        }
+        &:before {
+          content: "";
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          z-index: -1;
+          margin: -$border;
+          border-radius: inherit;
+          background: $rainbow-gradient;
+        }
       }
     }
   }
@@ -147,6 +186,7 @@ export default {
     }
   }
 }
+
 @media (max-width: 600px) {
   .calendar {
     flex-wrap: nowrap;
