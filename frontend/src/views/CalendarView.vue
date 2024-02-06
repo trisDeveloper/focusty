@@ -16,19 +16,15 @@
 
 <script>
 import taskList from "../components/task-list.vue";
+import axios from "axios";
+
 export default {
   components: { taskList },
   data() {
     return {
       today: new Date(),
       isWideScreen: window.innerWidth >= 1075 || window.innerWidth <= 600,
-      tasks: [
-        { title: "Task 111111", date: "2024-02-05", done: false },
-        { title: "Task 2", date: "2024-02-08", done: false },
-        { title: "Task 3", date: "2024-02-07", done: false },
-        { title: "Task 4", date: "2024-02-07", done: false },
-        { title: "Task 0", date: "2024-02-07", done: false },
-      ],
+      tasks: [],
     };
   },
   computed: {
@@ -97,9 +93,24 @@ export default {
     handleResize() {
       this.isWideScreen = window.innerWidth >= 1075 || window.innerWidth <= 600;
     },
+    fetchData() {
+      // get tasks list
+      axios
+        .get("/api/tasks/")
+        .then((response) => {
+          console.log(response.data);
+          this.tasks = response.data;
+        })
+        .catch((error) => {
+          // Handle errors
+          console.error(error);
+        });
+    },
   },
   mounted() {
     window.addEventListener("resize", this.handleResize);
+    // from backend
+    this.fetchData();
   },
   beforeUnmount() {
     window.removeEventListener("resize", this.handleResize);
