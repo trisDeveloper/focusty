@@ -2,8 +2,6 @@ import "./styles.scss";
 import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
-// store file vueX
-import store from "./store";
 
 // font awesome icons
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -31,6 +29,5 @@ library.add(
 
 const app = createApp(App);
 app.use(router);
-app.use(store);
 app.component("font-awesome-icon", FontAwesomeIcon);
 app.mount("#app");
