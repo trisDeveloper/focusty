@@ -8,7 +8,7 @@
       <font-awesome-icon
         icon="fa-regular fa-check-square"
         class="checkbox"
-        @click="taskdone(task)"
+        @click="updateTaskDoneStatus(task)"
         :class="{ done: task.done }"
       />
       {{ task.title }}
@@ -17,11 +17,18 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   props: ["tasks", "day"],
   methods: {
-    taskdone(task) {
-      task.done = !task.done;
+    async updateTaskDoneStatus(task) {
+      try {
+        task.done = !task.done;
+        await axios.patch(`/api/tasks/${task.id}/`, { done: task.done });
+      } catch (error) {
+        // Handle errors
+        console.error(error);
+      }
     },
   },
 };
