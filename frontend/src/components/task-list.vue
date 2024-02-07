@@ -34,6 +34,8 @@
         <input
           class="task-title"
           v-model="selectedTask.title"
+          @input="updateTaskTitle"
+          @keyup.enter="saveTaskAndClose"
           placeholder="Title"
         />
         <font-awesome-icon icon="fa-solid fa-pencil" />
@@ -47,6 +49,8 @@
       <input
         class="task-desc"
         v-model="selectedTask.description"
+        @input="updateTaskDescription"
+        @keyup.enter="saveTaskAndClose"
         placeholder="Description"
       />
     </div>
@@ -60,6 +64,7 @@ export default {
   data() {
     return {
       selectedTask: {
+        id: null,
         title: "",
         date: this.day.date,
         description: "",
@@ -89,6 +94,7 @@ export default {
     },
     closeTaskCard(event) {
       if (this.$refs.taskCard && !this.$refs.taskCard.contains(event.target)) {
+        this.saveTaskAndClose();
         this.isopencard = false;
         document.body.removeEventListener("click", this.closeTaskCard);
       }
@@ -100,6 +106,34 @@ export default {
         this.isopencard = false;
         await axios.delete(`/api/tasks/${task.id}/`, { done: task.done });
         this.$emit("task-deleted", task.id);
+      } catch (error) {
+        // Handle errors
+        console.error(error);
+      }
+    },
+    // Update task title
+    updateTaskTitle(event) {
+      this.selectedTask.title = event.target.value;
+    },
+    // Update task description
+    updateTaskDescription(event) {
+      this.selectedTask.description = event.target.value;
+    },
+    async saveTaskAndClose() {
+      try {
+        if (this.selectedTask.id) {
+          // If task already has an id, update existing task
+          await axios.put(
+            `/api/tasks/${this.selectedTask.id}/`,
+            this.selectedTask
+          );
+        } else {
+          // If task doesn't have an id, create a new task
+          await axios.post("/api/tasks/", this.selectedTask);
+        }
+        this.$emit("task-saved");
+        // Close the task card
+        this.isopencard = false;
       } catch (error) {
         // Handle errors
         console.error(error);
