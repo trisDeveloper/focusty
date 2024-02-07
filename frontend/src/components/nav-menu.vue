@@ -1,13 +1,13 @@
 <template>
   <nav class="navbar">
     <div class="nav">
-      <button class="menu-button" @click="toggleSidebar">
+      <button class="menu-button" @click="toggleSidebar($event)">
         <font-awesome-icon icon="bars" />
       </button>
       <div class="date">{{ today }}</div>
     </div>
     <img class="profile-icon" :src="profileImage" alt="Profile" />
-    <div class="sidebar" :class="{ active: isSidebarActive }">
+    <div class="sidebar" :class="{ active: isSidebarActive }" ref="sidebar">
       <ul class="sidebar-menu">
         <li class="menu-items">
           <router-link
@@ -74,8 +74,20 @@ export default {
     };
   },
   methods: {
-    toggleSidebar() {
+    toggleSidebar(event) {
+      event.stopPropagation();
       this.isSidebarActive = !this.isSidebarActive;
+      if (this.isSidebarActive) {
+        window.addEventListener("click", this.closeSidebar);
+      } else {
+        window.removeEventListener("click", this.closeSidebar);
+      }
+    },
+    closeSidebar(event) {
+      if (!this.$refs.sidebar.contains(event.target)) {
+        this.isSidebarActive = false;
+        window.removeEventListener("click", this.closeSidebar);
+      }
     },
   },
 };

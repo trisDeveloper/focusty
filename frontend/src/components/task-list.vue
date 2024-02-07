@@ -4,6 +4,7 @@
       v-for="task in day.tasks"
       :key="task.title"
       :class="{ task, done: task.done }"
+      @click="openTaskCard($event, task)"
     >
       <font-awesome-icon
         icon="fa-regular fa-check-square"
@@ -11,7 +12,14 @@
         @click="updateTaskDoneStatus(task)"
         :class="{ done: task.done }"
       />
-      {{ task.title }}
+      <p>{{ task.title }}</p>
+    </div>
+    <div v-if="isopencard" class="task-card" ref="taskCard">
+      <input class="task-title" :value="selectedTask.titles" />
+      <p>{{ selectedTask.description }}</p>
+      <p>{{ selectedTask.date }}</p>
+      <button @click="deleteTask(selectedTask)">Delete</button>
+      <!-- Other task details and actions -->
     </div>
   </div>
 </template>
@@ -20,6 +28,12 @@
 import axios from "axios";
 export default {
   props: ["tasks", "day"],
+  data() {
+    return {
+      selectedTask: null,
+      isopencard: false,
+    };
+  },
   methods: {
     async updateTaskDoneStatus(task) {
       try {
@@ -30,6 +44,38 @@ export default {
         console.error(error);
       }
     },
+    openTaskCard(event, task) {
+      event.stopPropagation();
+      this.isopencard = !this.isopencard;
+      this.selectedTask = task;
+      if (this.isopencard) {
+        window.addEventListener("click", this.closeTaskCard);
+      } else {
+        window.removeEventListener("click", this.closeTaskCard);
+      }
+    },
+    closeTaskCard(event) {
+      if (this.$refs.taskCard && !this.$refs.taskCard.contains(event.target)) {
+        this.isopencard = false;
+        window.removeEventListener("click", this.closeTaskCard);
+      }
+    },
+    // delete task
+    async deleteTask(task) {
+      try {
+        task.done = !task.done;
+        await axios.delete(`/api/tasks/${task.id}/`, { done: task.done });
+      } catch (error) {
+        // Handle errors
+        console.error(error);
+      }
+    },
+  },
+  mounted() {
+    document.body.addEventListener("click", this.closeTaskCard);
+  },
+  beforeUnmount() {
+    document.body.removeEventListener("click", this.closeTaskCard);
   },
 };
 </script>
@@ -44,7 +90,7 @@ export default {
     font-size: 18px;
     position: relative;
     margin: 8px 0;
-    padding: 10px;
+    padding: 8px;
     box-sizing: border-box;
     $border: 1px;
     color: #fff;
@@ -55,7 +101,9 @@ export default {
     .checkbox {
       padding: 0 10px 0 0;
     }
-
+    p {
+      overflow: hidden;
+    }
     &:hover {
       background-color: #121231;
       cursor: pointer;
@@ -77,6 +125,18 @@ export default {
     color: #393949;
     text-decoration: line-through;
     transition: all 0.3s;
+  }
+  .task-card {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 400px;
+    max-width: calc(100% - 10px);
+    transform: translate(-50%, -50%);
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #393949;
+    z-index: 10;
   }
 }
 </style>

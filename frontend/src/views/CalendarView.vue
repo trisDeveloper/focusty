@@ -23,22 +23,23 @@ export default {
   data() {
     return {
       today: new Date(),
+      // change calendar days depends on the width, if not widescreen show 4 days only
       isWideScreen: window.innerWidth >= 1075 || window.innerWidth <= 600,
       tasks: [],
     };
   },
   computed: {
+    // change calendar days depends on the width, if not widescreen show 4 days only
     displayedDays() {
       const daysToDisplay = this.isWideScreen ? 7 : 4;
       const displayedDays = this.next7Days.slice(0, daysToDisplay);
-
       // Populate tasks for each day
       displayedDays.forEach((day) => {
         day.tasks = this.getTasksForDate(day.date);
       });
-
       return displayedDays;
     },
+    // make weekly view starts from today
     next7Days() {
       const nextDays = [];
       for (let i = 0; i < 7; i++) {
@@ -48,13 +49,14 @@ export default {
           weekday: this.formatDatePart(nextDay, "weekday"),
           month: this.formatDatePart(nextDay, "month"),
           day: this.formatDatePart(nextDay, "day"),
-          date: nextDay.toISOString().split("T")[0], // Add the date property
+          date: nextDay.toISOString().split("T")[0],
         });
       }
       return nextDays;
     },
   },
   methods: {
+    // day format settings
     formatDatePart(date, part) {
       const options = {
         weekday: "short",
@@ -63,12 +65,14 @@ export default {
       };
       return date.toLocaleDateString("en-US", { [part]: options[part] });
     },
+    //filter tasks per day
     getTasksForDate(date) {
       const tasksForDate = this.tasks.filter((task) => task.date === date);
       return tasksForDate.sort((a, b) =>
         a.done === b.done ? 0 : a.done ? 1 : -1
       );
     },
+    // change color depends on weekday
     getDayColor(weekday) {
       // Add logic to determine color based on weekday
       switch (weekday) {
@@ -90,6 +94,7 @@ export default {
           return "#ddd"; // Default color
       }
     },
+    // change calendar days depends on the width, if not widescreen show 4 days only
     handleResize() {
       this.isWideScreen = window.innerWidth >= 1075 || window.innerWidth <= 600;
     },
@@ -134,6 +139,8 @@ export default {
     width: calc(100% / 7);
     padding: 5px;
     border: 1px solid #ffffff0f;
+    display: flex;
+    flex-direction: column;
     .dayname {
       height: fit-content;
       display: flex;
@@ -152,43 +159,7 @@ export default {
     }
     .tasks {
       padding: 5px;
-      .task {
-        display: flex;
-        align-items: stretch;
-        font-size: 18px;
-        position: relative;
-        margin: 8px 0;
-        padding: 10px;
-        box-sizing: border-box;
-        $border: 1px;
-        color: #fff;
-        background: $dark-back;
-        background-clip: padding-box;
-        border: solid $border transparent;
-        border-radius: 7px;
-        .checkbox {
-          padding: 0 10px 0 0;
-          &:hover {
-            color: yellow;
-          }
-        }
-
-        &:hover {
-          background-color: #121231;
-        }
-        &:before {
-          content: "";
-          position: absolute;
-          top: 0;
-          right: 0;
-          bottom: 0;
-          left: 0;
-          z-index: -1;
-          margin: -$border;
-          border-radius: inherit;
-          background: $rainbow-gradient;
-        }
-      }
+      flex-grow: 1;
     }
   }
   @media (max-width: 1075px) {
