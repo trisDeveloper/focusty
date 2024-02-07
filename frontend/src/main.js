@@ -11,15 +11,18 @@ axios.defaults.baseURL = "http://127.0.0.1:8000";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
   faBars,
+  faCalendarDays,
   faChartLine,
   faHome,
   faHourglass,
   faListCheck,
+  faPencil,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import {
   faCalendarCheck,
   faCheckSquare,
+  faTrashCan,
 } from "@fortawesome/free-regular-svg-icons";
 library.add(
   faBars,
@@ -28,7 +31,10 @@ library.add(
   faHourglass,
   faListCheck,
   faChartLine,
-  faCheckSquare
+  faCheckSquare,
+  faPencil,
+  faCalendarDays,
+  faTrashCan
 );
 
 const app = createApp(App);

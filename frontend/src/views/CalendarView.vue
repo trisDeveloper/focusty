@@ -8,7 +8,11 @@
           </div>
           <div class="daynum">{{ day.month }} {{ day.day }}</div>
         </div>
-        <task-list :tasks="tasks" :day="day" />
+        <task-list
+          :tasks="tasks"
+          :day="day"
+          @task-deleted="handleTaskDeleted"
+        />
       </div>
     </div>
   </div>
@@ -26,6 +30,7 @@ export default {
       // change calendar days depends on the width, if not widescreen show 4 days only
       isWideScreen: window.innerWidth >= 1075 || window.innerWidth <= 600,
       tasks: [],
+      day: {},
     };
   },
   computed: {
@@ -111,6 +116,10 @@ export default {
           console.error(error);
         });
     },
+    async handleTaskDeleted(taskId) {
+      // Remove the deleted task from the tasks array
+      this.tasks = this.tasks.filter((task) => task.id !== taskId);
+    },
   },
   mounted() {
     window.addEventListener("resize", this.handleResize);
@@ -156,10 +165,6 @@ export default {
         font-size: 23px;
         color: #fff;
       }
-    }
-    .tasks {
-      padding: 5px;
-      flex-grow: 1;
     }
   }
   @media (max-width: 1075px) {
