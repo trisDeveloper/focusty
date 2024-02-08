@@ -42,9 +42,7 @@
       </div>
       <!-- date input -->
       <button class="task-date">
-        <font-awesome-icon icon="fa-solid fa-calendar-days" />{{
-          selectedTask.date
-        }}
+        <font-awesome-icon icon="fa-solid fa-calendar-days" />{{ selectedTask.date }}
       </button>
       <input
         class="task-desc"
@@ -58,118 +56,115 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios'
 export default {
-  props: ["tasks", "day"],
+  props: ['tasks', 'day'],
   data() {
     return {
       selectedTask: {
         id: null,
-        title: "",
+        title: '',
         date: this.day.date,
-        description: "",
-        done: false,
+        description: '',
+        done: false
       },
-      isopencard: false,
-    };
+      isopencard: false
+    }
   },
   methods: {
     async updateTaskDoneStatus(task) {
       try {
-        task.done = !task.done;
-        await axios.patch(`/api/tasks/${task.id}/`, { done: task.done });
+        task.done = !task.done
+        await axios.patch(`/api/tasks/${task.id}/`, { done: task.done })
       } catch (error) {
         // Handle errors
-        console.error(error);
+        console.error(error)
       }
     },
     openTaskCard(event, task) {
-      if (event.target.closest(".task-card")) {
+      if (event.target.closest('.task-card')) {
         // Clicked inside the task card, don't trigger opening or closing
-        return;
+        return
       }
       if (!task && !this.isopencard) {
-        this.isopencard = true;
+        this.isopencard = true
       } else if (!task && this.isopencard) {
-        this.closeTaskCard();
+        this.closeTaskCard()
       } else if (task && !this.isopencard) {
-        this.isopencard = true;
-        this.selectedTask = task;
+        this.isopencard = true
+        this.selectedTask = task
       } else {
-        this.closeTaskCard();
+        this.closeTaskCard()
       }
       if (!this.isopencard) {
-        document.body.addEventListener("click", this.closeTaskCard);
+        document.body.addEventListener('click', this.closeTaskCard)
       } else {
-        document.body.removeEventListener("click", this.closeTaskCard);
+        document.body.removeEventListener('click', this.closeTaskCard)
       }
     },
 
     closeTaskCard() {
-      this.isopencard = false;
+      this.isopencard = false
       this.selectedTask = {
         id: null,
-        title: "",
+        title: '',
         date: this.day.date,
-        description: "",
-        done: false,
-      };
-      document.body.removeEventListener("click", this.closeTaskCard);
+        description: '',
+        done: false
+      }
+      document.body.removeEventListener('click', this.closeTaskCard)
     },
     // delete task
     async deleteTask(task) {
       try {
-        task.done = !task.done;
-        this.isopencard = false;
-        await axios.delete(`/api/tasks/${task.id}/`, { done: task.done });
-        this.isopencard = false;
-        this.$emit("task-deleted", task.id);
-        this.closeTaskCard();
+        task.done = !task.done
+        this.isopencard = false
+        await axios.delete(`/api/tasks/${task.id}/`, { done: task.done })
+        this.isopencard = false
+        this.$emit('task-deleted', task.id)
+        this.closeTaskCard()
       } catch (error) {
         // Handle errors
-        console.error(error);
+        console.error(error)
       }
     },
     // Update task title
     updateTaskTitle(event) {
-      this.selectedTask.title = event.target.value;
+      this.selectedTask.title = event.target.value
     },
     // Update task description
     updateTaskDescription(event) {
-      this.selectedTask.description = event.target.value;
+      this.selectedTask.description = event.target.value
     },
     async saveTaskAndClose() {
       try {
-        if (this.selectedTask.title.trim() === "") {
+        if (this.selectedTask.title.trim() === '') {
           // If title is empty, do nothing
-          return;
+          return
         }
         if (this.selectedTask.id) {
-          await axios.put(
-            `/api/tasks/${this.selectedTask.id}/`,
-            this.selectedTask
-          );
+          await axios.put(`/api/tasks/${this.selectedTask.id}/`, this.selectedTask)
         } else {
-          const response = await axios.post("/api/tasks/", this.selectedTask);
-          this.$emit("task-added", response.data);
+          const response = await axios.post('/api/tasks/', this.selectedTask)
+          this.$emit('task-added', response.data)
         }
-        this.$emit("task-saved");
-        this.closeTaskCard();
+        this.$emit('task-saved')
+        this.closeTaskCard()
       } catch (error) {
         // Handle errors
-        console.error(error);
+        console.error(error)
       }
-    },
+    }
   },
   mounted() {},
   beforeUnmount() {
-    document.body.removeEventListener("click", this.closeTaskCard);
-  },
-};
+    document.body.removeEventListener('click', this.closeTaskCard)
+  }
+}
 </script>
 
 <style lang="scss">
-@import "./../styles.scss";
+@import './../styles.scss';
 .tasks {
   padding: 5px;
   flex-grow: 1;
@@ -198,7 +193,7 @@ export default {
       cursor: pointer;
     }
     &:before {
-      content: "";
+      content: '';
       position: absolute;
       top: 0;
       right: 0;

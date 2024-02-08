@@ -1,13 +1,15 @@
-import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
+import { createRouter, createWebHistory } from 'vue-router'
+import HomeView from '../views/HomeView.vue'
 
-const routes = [
-  {
-    path: "/",
-    name: "home",
-    component: HomeView,
-  },
-  {
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    {
+      path: '/',
+      name: 'home',
+      component: HomeView
+    },
+    {
     path: "/calendar",
     name: "calendar",
     // route level code-splitting
@@ -22,7 +24,7 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import("../views/PomodoroView.vue"),
-  },*/
+  },
 
   {
     path: "/habits",
@@ -31,7 +33,7 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import("../views/HabitView.vue"),
-  } /*
+  } 
   {
     path: "/journey",
     name: "journey",
@@ -40,11 +42,7 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () => import("../views/JourneyView.vue"),
   },*/,
-];
+  ]
+})
 
-const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes,
-});
-
-export default router;
+export default router

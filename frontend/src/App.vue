@@ -1,18 +1,14 @@
+<script setup>
+import { RouterLink, RouterView } from 'vue-router'
+import NavMenu from "./components/nav-menu.vue"
+</script>
+
 <template>
-  <div id="app">
     <NavMenu />
-    <router-view />
-  </div>
+    <!-- eslint-disable-next-line -->
+    <RouterView />
 </template>
 
-<script>
-import NavMenu from "./components/nav-menu.vue";
-export default {
-  components: {
-    NavMenu,
-  },
-};
-</script>
 <style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

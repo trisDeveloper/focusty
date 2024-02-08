@@ -7,10 +7,14 @@ $rainbow-gradient: radial-gradient(circle at 100% 100%, #ffffff 0, #ffffff 3px, 
             linear-gradient(#ffffff, #ffffff) 50% 50%/calc(100% - 10px) calc(100% - 16px) no-repeat,
             linear-gradient(#ffffff, #ffffff) 50% 50%/calc(100% - 16px) calc(100% - 10px) no-repeat,
             linear-gradient(40deg, #6f5faada 10%, #ff55dab0 43%, #ff65a5a8 87%, #fff67aad 100%);
-* {
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  font-weight: normal;
 }
 body {
   font-family: Avenir, Helvetica, Arial, sans-serif;
