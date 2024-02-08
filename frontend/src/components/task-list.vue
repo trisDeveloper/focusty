@@ -1,10 +1,10 @@
 <template>
-  <div class="tasks">
+  <div class="tasks" @click="openTaskCard($event)">
     <div
       v-for="task in day.tasks"
       :key="task.title"
       :class="{ task, done: task.done }"
-      @click="openTaskCard($event, task)"
+      @click.stop="openTaskCard($event, task)"
     >
       <font-awesome-icon
         icon="fa-regular fa-check-square"
@@ -68,6 +68,7 @@ export default {
         title: "",
         date: this.day.date,
         description: "",
+        done: false,
       },
       isopencard: false,
     };
@@ -83,21 +84,37 @@ export default {
       }
     },
     openTaskCard(event, task) {
-      event.stopPropagation();
-      this.isopencard = !this.isopencard;
-      this.selectedTask = task;
-      if (this.isopencard) {
+      if (event.target.closest(".task-card")) {
+        // Clicked inside the task card, don't trigger opening or closing
+        return;
+      }
+      if (!task && !this.isopencard) {
+        this.isopencard = true;
+      } else if (!task && this.isopencard) {
+        this.closeTaskCard();
+      } else if (task && !this.isopencard) {
+        this.isopencard = true;
+        this.selectedTask = task;
+      } else {
+        this.closeTaskCard();
+      }
+      if (!this.isopencard) {
         document.body.addEventListener("click", this.closeTaskCard);
       } else {
         document.body.removeEventListener("click", this.closeTaskCard);
       }
     },
-    closeTaskCard(event) {
-      if (this.$refs.taskCard && !this.$refs.taskCard.contains(event.target)) {
-        this.saveTaskAndClose();
-        this.isopencard = false;
-        document.body.removeEventListener("click", this.closeTaskCard);
-      }
+
+    closeTaskCard() {
+      this.isopencard = false;
+      this.selectedTask = {
+        id: null,
+        title: "",
+        date: this.day.date,
+        description: "",
+        done: false,
+      };
+      document.body.removeEventListener("click", this.closeTaskCard);
     },
     // delete task
     async deleteTask(task) {
@@ -105,7 +122,9 @@ export default {
         task.done = !task.done;
         this.isopencard = false;
         await axios.delete(`/api/tasks/${task.id}/`, { done: task.done });
+        this.isopencard = false;
         this.$emit("task-deleted", task.id);
+        this.closeTaskCard();
       } catch (error) {
         // Handle errors
         console.error(error);
@@ -121,25 +140,28 @@ export default {
     },
     async saveTaskAndClose() {
       try {
+        if (this.selectedTask.title.trim() === "") {
+          // If title is empty, do nothing
+          return;
+        }
         if (this.selectedTask.id) {
-          // If task already has an id, update existing task
           await axios.put(
             `/api/tasks/${this.selectedTask.id}/`,
             this.selectedTask
           );
         } else {
-          // If task doesn't have an id, create a new task
-          await axios.post("/api/tasks/", this.selectedTask);
+          const response = await axios.post("/api/tasks/", this.selectedTask);
+          this.$emit("task-added", response.data);
         }
         this.$emit("task-saved");
-        // Close the task card
-        this.isopencard = false;
+        this.closeTaskCard();
       } catch (error) {
         // Handle errors
         console.error(error);
       }
     },
   },
+  mounted() {},
   beforeUnmount() {
     document.body.removeEventListener("click", this.closeTaskCard);
   },

@@ -12,6 +12,7 @@
           :tasks="tasks"
           :day="day"
           @task-deleted="handleTaskDeleted"
+          @task-added="handleTaskAdded"
         />
       </div>
     </div>
@@ -116,9 +117,13 @@ export default {
           console.error(error);
         });
     },
+    //handle deleted tasks
     async handleTaskDeleted(taskId) {
-      // Remove the deleted task from the tasks array
       this.tasks = this.tasks.filter((task) => task.id !== taskId);
+    },
+    //handle added tasks
+    handleTaskAdded(newTask) {
+      this.tasks.push(newTask);
     },
   },
   mounted() {
