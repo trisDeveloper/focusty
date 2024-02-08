@@ -8,12 +8,7 @@
           </div>
           <div class="daynum">{{ day.month }} {{ day.day }}</div>
         </div>
-        <task-list
-          :tasks="tasks"
-          :day="day"
-          @task-deleted="handleTaskDeleted"
-          @task-added="handleTaskAdded"
-        />
+        <task-list :tasks="tasks" :day="day" :fetch="fetchData" />
       </div>
     </div>
   </div>
@@ -94,12 +89,6 @@ export default {
         .catch((error) => {
           console.error(error)
         })
-    },
-    async handleTaskDeleted(taskId) {
-      this.tasks = this.tasks.filter((task) => task.id !== taskId)
-    },
-    handleTaskAdded(newTask) {
-      this.tasks.push(newTask)
     }
   },
   mounted() {

@@ -14,26 +14,26 @@
       />
       <p>{{ task.title }}</p>
     </div>
-    <div v-if="isopencard" class="task-card" ref="taskCard">
+    <div v-if="store.isopencard" class="task-card" ref="taskCard">
       <div class="task-actions">
         <!-- delete icon -->
         <font-awesome-icon
           icon="fa-regular fa-trash-can"
           class="trash"
-          @click="deleteTask(selectedTask)"
+          @click="deleteTask(store.selectedTask)"
         />
         <font-awesome-icon
           icon="fa-regular fa-check-square"
           class="checkbox"
-          @click="updateTaskDoneStatus(selectedTask)"
-          :class="{ done: selectedTask.done }"
+          @click="updateTaskDoneStatus(store.selectedTask)"
+          :class="{ done: store.selectedTask.done }"
         />
       </div>
       <!-- title -->
       <div class="task-title">
         <input
           class="task-title"
-          v-model="selectedTask.title"
+          v-model="store.selectedTask.title"
           @input="updateTaskTitle"
           @keyup.enter="saveTaskAndClose"
           placeholder="Title"
@@ -42,11 +42,11 @@
       </div>
       <!-- date input -->
       <button class="task-date">
-        <font-awesome-icon icon="fa-solid fa-calendar-days" />{{ selectedTask.date }}
+        <font-awesome-icon icon="fa-solid fa-calendar-days" />{{ store.selectedTask.date }}
       </button>
       <input
         class="task-desc"
-        v-model="selectedTask.description"
+        v-model="store.selectedTask.description"
         @input="updateTaskDescription"
         @keyup.enter="saveTaskAndClose"
         placeholder="Description"
@@ -56,106 +56,125 @@
 </template>
 
 <script>
+import { useStore } from '@/stores' // Adjust the import path as needed
 import axios from 'axios'
+
 export default {
-  props: ['tasks', 'day'],
-  data() {
-    return {
-      selectedTask: {
-        id: null,
-        title: '',
-        date: this.day.date,
-        description: '',
-        done: false
-      },
-      isopencard: false
-    }
-  },
-  methods: {
-    async updateTaskDoneStatus(task) {
+  props: ['tasks', 'day', 'fetch'],
+
+  setup(props) {
+    const store = useStore()
+
+    const updateTaskDoneStatus = async (task) => {
       try {
         task.done = !task.done
         await axios.patch(`/api/tasks/${task.id}/`, { done: task.done })
+        props.fetch()
       } catch (error) {
         // Handle errors
         console.error(error)
       }
-    },
-    openTaskCard(event, task) {
+    }
+
+    const openTaskCard = (event, task) => {
       if (event.target.closest('.task-card')) {
         // Clicked inside the task card, don't trigger opening or closing
         return
       }
-      if (!task && !this.isopencard) {
-        this.isopencard = true
-      } else if (!task && this.isopencard) {
-        this.closeTaskCard()
-      } else if (task && !this.isopencard) {
-        this.isopencard = true
-        this.selectedTask = task
-      } else {
-        this.closeTaskCard()
+      if (event.target.classList.contains('checkbox')) {
+        return
       }
-      if (!this.isopencard) {
-        document.body.addEventListener('click', this.closeTaskCard)
+      if (!task && !store.isopencard) {
+        // create new task
+        store.setIsOpenCard(true)
+        store.setSelectedTask({
+          id: null,
+          title: '',
+          date: props.day.date,
+          description: '',
+          done: false
+        })
+      } else if (!task && store.isopencard) {
+        closeTaskCard()
+      } else if (task && !store.isopencard) {
+        //update existing task
+        store.setIsOpenCard(true)
+        store.setSelectedTask({ ...task })
       } else {
-        document.body.removeEventListener('click', this.closeTaskCard)
+        closeTaskCard()
       }
-    },
+      if (!store.isopencard) {
+        document.body.addEventListener('click', closeTaskCard)
+      } else {
+        document.body.removeEventListener('click', closeTaskCard)
+      }
+    }
 
-    closeTaskCard() {
-      this.isopencard = false
-      this.selectedTask = {
+    const closeTaskCard = () => {
+      store.setIsOpenCard(false)
+      store.setSelectedTask({
         id: null,
         title: '',
-        date: this.day.date,
+        date: null,
         description: '',
         done: false
-      }
-      document.body.removeEventListener('click', this.closeTaskCard)
-    },
-    // delete task
-    async deleteTask(task) {
+      })
+      document.body.removeEventListener('click', closeTaskCard)
+    }
+
+    const deleteTask = async (task) => {
       try {
         task.done = !task.done
-        this.isopencard = false
+        store.setIsOpenCard(false)
         await axios.delete(`/api/tasks/${task.id}/`, { done: task.done })
-        this.isopencard = false
-        this.$emit('task-deleted', task.id)
-        this.closeTaskCard()
-      } catch (error) {
-        // Handle errors
-        console.error(error)
-      }
-    },
-    // Update task title
-    updateTaskTitle(event) {
-      this.selectedTask.title = event.target.value
-    },
-    // Update task description
-    updateTaskDescription(event) {
-      this.selectedTask.description = event.target.value
-    },
-    async saveTaskAndClose() {
-      try {
-        if (this.selectedTask.title.trim() === '') {
-          // If title is empty, do nothing
-          return
-        }
-        if (this.selectedTask.id) {
-          await axios.put(`/api/tasks/${this.selectedTask.id}/`, this.selectedTask)
-        } else {
-          const response = await axios.post('/api/tasks/', this.selectedTask)
-          this.$emit('task-added', response.data)
-        }
-        this.$emit('task-saved')
-        this.closeTaskCard()
+        store.setIsOpenCard(false)
+        props.fetch()
+        closeTaskCard()
       } catch (error) {
         // Handle errors
         console.error(error)
       }
     }
+
+    const updateTaskTitle = (event) => {
+      store.selectedTask.title = event.target.value
+    }
+
+    const updateTaskDescription = (event) => {
+      store.selectedTask.description = event.target.value
+    }
+
+    const saveTaskAndClose = async () => {
+      try {
+        if (store.selectedTask.title.trim() === '') {
+          // If title is empty, do nothing
+          return
+        }
+        if (store.selectedTask.id) {
+          await axios.put(`/api/tasks/${store.selectedTask.id}/`, store.selectedTask)
+        } else {
+          const response = await axios.post('/api/tasks/', store.selectedTask)
+        }
+        props.fetch()
+        closeTaskCard()
+      } catch (error) {
+        // Handle errors
+        console.error(error)
+      }
+    }
+
+    return {
+      store,
+      updateTaskDoneStatus,
+      openTaskCard,
+      closeTaskCard,
+      deleteTask,
+      updateTaskTitle,
+      updateTaskDescription,
+      saveTaskAndClose
+    }
   },
+
   mounted() {},
   beforeUnmount() {
     document.body.removeEventListener('click', this.closeTaskCard)
