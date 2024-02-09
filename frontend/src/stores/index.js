@@ -3,11 +3,11 @@ import { defineStore } from 'pinia'
 export const useStore = defineStore('storeId', {
   state: () => ({
     isopencard: false,
-    isdatepicker: false,
     selectedTask: {
       id: null,
       title: '',
       date: null,
+      time: null,
       description: '',
       done: false
     }
@@ -18,9 +18,6 @@ export const useStore = defineStore('storeId', {
     },
     setSelectedTask(task) {
       this.selectedTask = task
-    },
-    toggledatepicker(value) {
-      this.isdatepicker = value
     }
   }
 })

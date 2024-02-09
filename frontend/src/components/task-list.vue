@@ -40,22 +40,35 @@
         />
         <font-awesome-icon icon="fa-solid fa-pencil" />
       </div>
-
-      <!-- date input -->
-      <VDatePicker
-        v-model="store.selectedTask.date"
-        mode="dateTime"
-        class="date-picker"
-        color="indigo"
-        v-if="store.isdatepicker"
-        is-dark
-        hide-time-header
-        @update:modelValue="handleDateSelection"
-      />
-      <button class="task-date" @click="store.toggledatepicker(!store.isdatepicker)">
-        <font-awesome-icon icon="fa-solid fa-calendar-days" />{{ store.selectedTask.date }}
-      </button>
-
+      <div class="task-date">
+        <VDatePicker
+          v-model="store.selectedTask.date"
+          @update:modelValue="handleDateSelection"
+          is-dark
+          class="date-picker"
+          color="indigo"
+          :popover="false"
+        >
+          <template #default="{ togglePopover }">
+            <div>
+              <button class="date-btn" @click="() => togglePopover()">
+                <span
+                  ><font-awesome-icon icon="fa-solid fa-calendar-days" />{{
+                    store.selectedTask.date
+                  }}</span
+                >
+              </button>
+            </div>
+          </template>
+        </VDatePicker>
+        <VueDatePicker
+          v-model="time"
+          class="time-picker"
+          dark
+          time-picker
+          @update:modelValue="handleTimeSelection"
+        />
+      </div>
       <input
         class="task-desc"
         v-model="store.selectedTask.description"
@@ -70,12 +83,16 @@
 <script>
 import { useStore } from '@/stores'
 import axios from 'axios'
+import { ref } from 'vue'
+
 export default {
   props: ['tasks', 'day', 'fetch'],
-
   setup(props) {
     const store = useStore()
-
+    const time = ref({
+      hours: new Date().getHours(),
+      minutes: new Date().getMinutes()
+    })
     const updateTaskDoneStatus = async (task) => {
       try {
         task.done = !task.done
@@ -102,6 +119,7 @@ export default {
           id: null,
           title: '',
           date: props.day.date,
+          time: null,
           description: '',
           done: false
         })
@@ -122,13 +140,13 @@ export default {
     }
 
     const closeTaskCard = () => {
-      store.toggledatepicker(false)
       store.setIsOpenCard(false)
 
       store.setSelectedTask({
         id: null,
         title: '',
         date: null,
+        time: null,
         description: '',
         done: false
       })
@@ -154,6 +172,10 @@ export default {
     const handleDateSelection = (selectedDate) => {
       store.selectedTask.date = selectedDate.toISOString().split('T')[0]
     }
+    const handleTimeSelection = (modelData) => {
+      time.value = modelData
+      store.selectedTask.time = `${time.value.hours}:${time.value.minutes}`
+    }
 
     const updateTaskDescription = (event) => {
       store.selectedTask.description = event.target.value
@@ -172,6 +194,7 @@ export default {
           await axios.post('/api/tasks/', store.selectedTask)
         }
         props.fetch()
+
         closeTaskCard()
       } catch (error) {
         // Handle errors
@@ -181,6 +204,7 @@ export default {
 
     return {
       store,
+      time,
       updateTaskDoneStatus,
       openTaskCard,
       closeTaskCard,
@@ -188,7 +212,8 @@ export default {
       updateTaskTitle,
       updateTaskDescription,
       saveTaskAndClose,
-      handleDateSelection
+      handleDateSelection,
+      handleTimeSelection
     }
   },
 
@@ -286,9 +311,6 @@ export default {
       padding: 5px;
       font-size: 20px;
       border-bottom: 1px solid transparent;
-      &:hover {
-        background-color: #121231;
-      }
       &:focus-visible {
         outline: none;
         border-bottom: 1px solid white;
@@ -298,6 +320,9 @@ export default {
       position: relative;
       display: flex;
       align-items: center;
+      &:hover {
+        background-color: #121231;
+      }
       input {
         border-bottom: 1px solid #ddd;
       }
@@ -312,48 +337,61 @@ export default {
       font-size: 16px;
       text-align: left;
       border: none;
-      padding: 10px 5px;
-      svg {
-        padding-right: 10px;
+      display: flex;
+      align-items: center;
+      .date-picker {
+        border: 1px solid #a984ff;
+
+        background: #121231 !important;
+        position: absolute;
+        .vc-header {
+          .vc-title {
+            background: #06061c !important;
+          }
+          .vc-arrow {
+            background: #121231;
+          }
+        }
+      }
+      .date-btn {
+        background: inherit;
+        border: none;
+        color: inherit;
+        font-size: inherit;
+        border: 1px solid #121231;
+        cursor: pointer;
+        padding: 9px 5px;
+        margin-right: 6px;
+        border-radius: 4px;
+        transition: all 0.3s ease-in-out;
+        &:hover {
+          background: #06061c;
+          border: 1px solid #aaaeb7;
+        }
+        svg {
+          padding-right: 7px;
+          color: #959595;
+          &:hover {
+            color: inherit;
+          }
+        }
+      }
+      .time-picker {
+        width: 120px;
+        .dp__pointer {
+          background: inherit !important;
+          border: none;
+          &:hover {
+            background: #06061c;
+          }
+        }
       }
     }
     .task-desc {
       font-size: 15px;
       color: #ffffffc4;
-    }
-  }
-  .date-picker {
-    border: 1px solid #a984ff;
-    background: #121231;
-    .vc-header {
-      .vc-title {
-        background: #06061c;
-      }
-      .vc-arrow {
-        background: #121231;
-      }
-    }
-    .vc-time-select-group {
-      background: #06061c;
-      border: none !important;
-      select {
-        border: none !important;
-        &:hover {
-          background: #121231;
-        }
-        &::-webkit-scrollbar {
-          width: 5px;
-        }
-        &::-webkit-scrollbar-thumb {
-          background-color: transparent;
-          border-radius: 5px;
-        }
-        &::-webkit-scrollbar-track {
-          background-color: transparent;
-        }
-        &::-webkit-scrollbar-thumb:hover {
-          background-color: #bed5ff42;
-        }
+      &:hover {
+        background-color: #121231;
       }
     }
   }

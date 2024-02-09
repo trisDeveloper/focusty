@@ -1,12 +1,12 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import NavMenu from "./components/nav-menu.vue"
+import NavMenu from './components/nav-menu.vue'
 </script>
 
 <template>
-    <NavMenu />
-    <!-- eslint-disable-next-line -->
-    <RouterView />
+  <NavMenu />
+  <!-- eslint-disable-next-line -->
+  <RouterView />
 </template>
 
 <style lang="scss">
