@@ -7,9 +7,13 @@ export const useStore = defineStore('storeId', {
       id: null,
       title: '',
       date: null,
-      time: null,
+      time: '00:00',
       description: '',
       done: false
+    },
+    timepic: {
+      hours: 0,
+      minutes: 0
     }
   }),
   actions: {

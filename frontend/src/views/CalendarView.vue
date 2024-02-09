@@ -92,10 +92,22 @@ export default {
         .get('/api/tasks/')
         .then((response) => {
           this.tasks = response.data
+          // Sort tasks after fetching
+          this.sortTasks()
         })
         .catch((error) => {
           console.error(error)
         })
+    },
+    sortTasks() {
+      this.tasks.sort((a, b) => {
+        // If a task doesn't have a time, it comes first
+        if (!a.time && !b.time) return 0
+        if (!a.time) return -1
+        if (!b.time) return 1
+        // Sort based on time
+        return a.time.localeCompare(b.time)
+      })
     }
   },
   // responsive week view

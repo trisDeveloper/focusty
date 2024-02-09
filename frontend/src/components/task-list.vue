@@ -62,7 +62,7 @@
           </template>
         </VDatePicker>
         <VueDatePicker
-          v-model="time"
+          v-model="store.timepic"
           class="time-picker"
           dark
           time-picker
@@ -83,16 +83,11 @@
 <script>
 import { useStore } from '@/stores'
 import axios from 'axios'
-import { ref } from 'vue'
 
 export default {
   props: ['tasks', 'day', 'fetch'],
   setup(props) {
     const store = useStore()
-    const time = ref({
-      hours: new Date().getHours(),
-      minutes: new Date().getMinutes()
-    })
     const updateTaskDoneStatus = async (task) => {
       try {
         task.done = !task.done
@@ -129,6 +124,12 @@ export default {
         //update existing task
         store.setIsOpenCard(true)
         store.setSelectedTask({ ...task })
+        if (store.selectedTask.time) {
+          store.timepic = {
+            hours: store.selectedTask.time.split(':')[0],
+            minutes: store.selectedTask.time.split(':')[1]
+          }
+        }
       } else {
         saveTaskAndClose()
       }
@@ -150,6 +151,10 @@ export default {
         description: '',
         done: false
       })
+      store.timepic = {
+        hours: 0,
+        minutes: 0
+      }
       document.body.removeEventListener('click', closeTaskCard)
     }
 
@@ -173,14 +178,13 @@ export default {
       store.selectedTask.date = selectedDate.toISOString().split('T')[0]
     }
     const handleTimeSelection = (modelData) => {
-      time.value = modelData
-      store.selectedTask.time = `${time.value.hours}:${time.value.minutes}`
+      store.timepic = modelData // Directly update separate model
+      store.selectedTask.time = `${store.timepic.hours}:${store.timepic.minutes}` // Format and update the actual task time
     }
 
     const updateTaskDescription = (event) => {
       store.selectedTask.description = event.target.value
     }
-
     const saveTaskAndClose = async () => {
       try {
         if (store.selectedTask.title.trim() === '') {
@@ -194,7 +198,6 @@ export default {
           await axios.post('/api/tasks/', store.selectedTask)
         }
         props.fetch()
-
         closeTaskCard()
       } catch (error) {
         // Handle errors
@@ -204,7 +207,6 @@ export default {
 
     return {
       store,
-      time,
       updateTaskDoneStatus,
       openTaskCard,
       closeTaskCard,
@@ -320,7 +322,7 @@ export default {
       position: relative;
       display: flex;
       align-items: center;
-      &:hover {
+      & input:hover {
         background-color: #121231;
       }
       input {
@@ -341,17 +343,18 @@ export default {
       align-items: center;
       .date-picker {
         border: 1px solid #a984ff;
-
         background: #121231 !important;
         position: absolute;
-        .vc-header {
-          .vc-title {
-            background: #06061c !important;
-          }
-          .vc-arrow {
-            background: #121231;
-          }
+        button {
+          background: #06061c !important;
         }
+        .vc-arrow {
+          background: #121231;
+        }
+      }
+      .vc-popover-content-wrapper .vc-popover-content button {
+        background: #06061b !important;
+        color: #fff;
       }
       .date-btn {
         background: inherit;
@@ -380,9 +383,10 @@ export default {
         width: 120px;
         .dp__pointer {
           background: inherit !important;
-          border: none;
+          border: 1px solid #121231;
           &:hover {
             background: #06061c;
+            border: 1px solid #aaaeb7;
           }
         }
       }
