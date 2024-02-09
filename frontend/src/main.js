@@ -4,6 +4,8 @@ import { createPinia } from 'pinia'
 import axios from 'axios'
 import App from './App.vue'
 import router from './router'
+import VCalendar from 'v-calendar'
+import 'v-calendar/style.css'
 
 axios.defaults.baseURL = 'http://127.0.0.1:8000'
 
@@ -37,5 +39,6 @@ const app = createApp(App)
 
 app.use(createPinia())
 app.use(router, axios)
+app.use(VCalendar, {})
 app.component('font-awesome-icon', FontAwesomeIcon)
 app.mount('#app')

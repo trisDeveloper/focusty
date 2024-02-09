@@ -23,11 +23,13 @@ export default {
   data() {
     return {
       today: new Date(),
+      // resposive week view
       isWideScreen: window.innerWidth >= 1075 || window.innerWidth <= 600,
       tasks: []
     }
   },
   computed: {
+    // responsive week view
     displayedDays() {
       const daysToDisplay = this.isWideScreen ? 7 : 4
       const displayedDays = this.next7Days.slice(0, daysToDisplay)
@@ -36,6 +38,7 @@ export default {
       })
       return displayedDays
     },
+    // weekly view
     next7Days() {
       const nextDays = []
       for (let i = 0; i < 7; i++) {
@@ -52,6 +55,7 @@ export default {
     }
   },
   methods: {
+    // date format    - thu feb 8 -
     formatDatePart(date, part) {
       const options = {
         weekday: 'short',
@@ -60,11 +64,13 @@ export default {
       }
       return date.toLocaleDateString('en-US', { [part]: options[part] })
     },
+    // filter tasks per day
     getTasksForDate(date) {
       return this.tasks
         .filter((task) => task.date === date)
         .sort((a, b) => (a.done === b.done ? 0 : a.done ? 1 : -1))
     },
+    // set colors per day
     getDayColor(weekday) {
       const colors = {
         Sun: '#ff8d84',
@@ -80,6 +86,7 @@ export default {
     handleResize() {
       this.isWideScreen = window.innerWidth >= 1075 || window.innerWidth <= 600
     },
+    // get tasks list from backend
     fetchData() {
       axios
         .get('/api/tasks/')
@@ -91,6 +98,7 @@ export default {
         })
     }
   },
+  // responsive week view
   mounted() {
     window.addEventListener('resize', this.handleResize)
     this.fetchData()

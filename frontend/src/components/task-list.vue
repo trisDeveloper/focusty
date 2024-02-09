@@ -40,10 +40,22 @@
         />
         <font-awesome-icon icon="fa-solid fa-pencil" />
       </div>
+
       <!-- date input -->
-      <button class="task-date">
+      <VDatePicker
+        v-model="store.selectedTask.date"
+        mode="dateTime"
+        class="date-picker"
+        color="indigo"
+        v-if="store.isdatepicker"
+        is-dark
+        hide-time-header
+        @update:modelValue="handleDateSelection"
+      />
+      <button class="task-date" @click="store.toggledatepicker(!store.isdatepicker)">
         <font-awesome-icon icon="fa-solid fa-calendar-days" />{{ store.selectedTask.date }}
       </button>
+
       <input
         class="task-desc"
         v-model="store.selectedTask.description"
@@ -56,9 +68,8 @@
 </template>
 
 <script>
-import { useStore } from '@/stores' // Adjust the import path as needed
+import { useStore } from '@/stores'
 import axios from 'axios'
-
 export default {
   props: ['tasks', 'day', 'fetch'],
 
@@ -95,13 +106,13 @@ export default {
           done: false
         })
       } else if (!task && store.isopencard) {
-        closeTaskCard()
+        saveTaskAndClose()
       } else if (task && !store.isopencard) {
         //update existing task
         store.setIsOpenCard(true)
         store.setSelectedTask({ ...task })
       } else {
-        closeTaskCard()
+        saveTaskAndClose()
       }
       if (!store.isopencard) {
         document.body.addEventListener('click', closeTaskCard)
@@ -111,7 +122,9 @@ export default {
     }
 
     const closeTaskCard = () => {
+      store.toggledatepicker(false)
       store.setIsOpenCard(false)
+
       store.setSelectedTask({
         id: null,
         title: '',
@@ -125,11 +138,9 @@ export default {
     const deleteTask = async (task) => {
       try {
         task.done = !task.done
-        store.setIsOpenCard(false)
-        await axios.delete(`/api/tasks/${task.id}/`, { done: task.done })
-        store.setIsOpenCard(false)
-        props.fetch()
         closeTaskCard()
+        await axios.delete(`/api/tasks/${task.id}/`, { done: task.done })
+        props.fetch()
       } catch (error) {
         // Handle errors
         console.error(error)
@@ -140,6 +151,10 @@ export default {
       store.selectedTask.title = event.target.value
     }
 
+    const handleDateSelection = (selectedDate) => {
+      store.selectedTask.date = selectedDate.toISOString().split('T')[0]
+    }
+
     const updateTaskDescription = (event) => {
       store.selectedTask.description = event.target.value
     }
@@ -148,12 +163,13 @@ export default {
       try {
         if (store.selectedTask.title.trim() === '') {
           // If title is empty, do nothing
+          closeTaskCard()
           return
         }
         if (store.selectedTask.id) {
           await axios.put(`/api/tasks/${store.selectedTask.id}/`, store.selectedTask)
         } else {
-          const response = await axios.post('/api/tasks/', store.selectedTask)
+          await axios.post('/api/tasks/', store.selectedTask)
         }
         props.fetch()
         closeTaskCard()
@@ -171,7 +187,8 @@ export default {
       deleteTask,
       updateTaskTitle,
       updateTaskDescription,
-      saveTaskAndClose
+      saveTaskAndClose,
+      handleDateSelection
     }
   },
 
@@ -242,7 +259,7 @@ export default {
     padding: 20px;
     background-color: #06061c;
     border: 1px solid #8269ac;
-    box-shadow: 0px 2px 8px 2px #0202087e;
+    box-shadow: 0px 2px 10px 2px #03030e41;
     z-index: 10;
     .task-actions {
       display: flex;
@@ -303,6 +320,41 @@ export default {
     .task-desc {
       font-size: 15px;
       color: #ffffffc4;
+    }
+  }
+  .date-picker {
+    border: 1px solid #a984ff;
+    background: #121231;
+    .vc-header {
+      .vc-title {
+        background: #06061c;
+      }
+      .vc-arrow {
+        background: #121231;
+      }
+    }
+    .vc-time-select-group {
+      background: #06061c;
+      border: none !important;
+      select {
+        border: none !important;
+        &:hover {
+          background: #121231;
+        }
+        &::-webkit-scrollbar {
+          width: 5px;
+        }
+        &::-webkit-scrollbar-thumb {
+          background-color: transparent;
+          border-radius: 5px;
+        }
+        &::-webkit-scrollbar-track {
+          background-color: transparent;
+        }
+        &::-webkit-scrollbar-thumb:hover {
+          background-color: #bed5ff42;
+        }
+      }
     }
   }
 }
