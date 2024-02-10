@@ -9,11 +9,12 @@
           </div>
           <div class="daynum">{{ day.month }} {{ day.day }}</div>
         </div>
-        <div class="tasks" @click="openTaskCard($event, null, day)">
+        <div class="tasks" @click="openTaskCard($event, null, day)" :id="index">
           <!-- i wanna drag this task and add the ability to put it on another day or group mentioned up-->
           <div
             v-for="task in day.tasks"
-            :key="task.title"
+            :key="task.id"
+            :id="task.id"
             :class="{ task, done: task.done }"
             @click.stop="openTaskCard($event, task, day)"
           >
@@ -97,14 +98,15 @@
 <script setup>
 import axios from 'axios'
 import { useStore } from '@/stores'
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
+import Sortable from 'sortablejs'
 
 const store = useStore()
 
 const today = new Date()
 const tasks = ref([])
 // resposive week view
-const isWideScreen = computed(() => window.innerWidth >= 1075 || window.innerWidth <= 600)
+let isWideScreen = window.innerWidth >= 1075 || window.innerWidth <= 600
 
 const next7Days = computed(() => {
   const nextDays = []
@@ -122,13 +124,42 @@ const next7Days = computed(() => {
 })
 
 const displayedDays = computed(() => {
-  const daysToDisplay = isWideScreen.value ? 7 : 4
+  const daysToDisplay = isWideScreen ? 7 : 4
   const displayedDays = next7Days.value.slice(0, daysToDisplay)
   displayedDays.forEach((day) => {
     day.tasks = getTasksForDate(day.date)
   })
   return displayedDays
 })
+
+onMounted(() => {
+  for (let index = 0; index < displayedDays.value.length; index++) {
+    const element = document.getElementById(index)
+    Sortable.create(element, {
+      group: 'shared',
+      sort: false,
+      animation: 150,
+      ghostClass: 'none',
+      chosenClass: 'none',
+      dragClass: 'none',
+      onEnd: (evt) => {
+        let task = evt.item.id
+        let date = displayedDays.value[evt.to.id].date
+        dropTaskDate(task, date)
+      }
+    })
+  }
+})
+const dropTaskDate = async (task, date) => {
+  try {
+    await axios.patch(`/api/tasks/${task}/`, { date: date })
+    sortTasks()
+    fetchData()
+  } catch (error) {
+    // Handle errors
+    console.error(error)
+  }
+}
 // date format    - thu feb 8 -
 const formatDatePart = (date, part) => {
   const options = {
@@ -161,7 +192,7 @@ const getDayColor = (weekday) => {
 }
 
 const handleResize = () => {
-  isWideScreen.value = window.innerWidth >= 1075 || window.innerWidth <= 600
+  isWideScreen = window.innerWidth >= 1075 || window.innerWidth <= 600
 }
 
 // get tasks list from backend
@@ -314,7 +345,9 @@ fetchData()
 
 <style lang="scss">
 @import './../styles.scss';
-
+.none::before {
+  display: none;
+}
 .container {
   max-width: 1500px;
   margin: 0 auto;

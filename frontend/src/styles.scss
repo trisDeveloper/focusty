@@ -1,16 +1,16 @@
 $dark-back: #06061b;
 $border-gradient: linear-gradient(to right bottom, #7a55ff, #ff4caa, #ffdc86);
 $rainbow-gradient:
-  radial-gradient(circle at 100% 100%, #ffffff 0, #ffffff 3px, transparent 3px) 0% 0%/8px 8px
+  radial-gradient(circle at 100% 100%, #06061b 0, #06061b 6px, transparent 6px) 0% 0%/8px 8px
     no-repeat,
-  radial-gradient(circle at 0 100%, #ffffff 0, #ffffff 3px, transparent 3px) 100% 0%/8px 8px
+  radial-gradient(circle at 0 100%, #06061b 0, #06061b 6px, transparent 6px) 100% 0%/8px 8px
     no-repeat,
-  radial-gradient(circle at 100% 0, #ffffff 0, #ffffff 3px, transparent 3px) 0% 100%/8px 8px
+  radial-gradient(circle at 100% 0, #06061b 0, #06061b 6px, transparent 6px) 0% 100%/8px 8px
     no-repeat,
-  radial-gradient(circle at 0 0, #ffffff 0, #ffffff 3px, transparent 3px) 100% 100%/8px 8px
+  radial-gradient(circle at 0 0, #06061b 0, #06061b 6px, transparent 6px) 100% 100%/8px 8px
     no-repeat,
-  linear-gradient(#ffffff, #ffffff) 50% 50% / calc(100% - 10px) calc(100% - 16px) no-repeat,
-  linear-gradient(#ffffff, #ffffff) 50% 50% / calc(100% - 16px) calc(100% - 10px) no-repeat,
+  linear-gradient(#06061b, #06061b) 50% 50% / calc(100% - 10px) calc(100% - 4px) no-repeat,
+  linear-gradient(#06061b, #06061b) 50% 50% / calc(100% - 4px) calc(100% - 10px) no-repeat,
   linear-gradient(40deg, #6f5faada 10%, #ff55dab0 43%, #ff65a5a8 87%, #fff67aad 100%);
 
 *,
