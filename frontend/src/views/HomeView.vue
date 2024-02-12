@@ -1,17 +1,13 @@
 <template>
   <div class="home">
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <HelloWorld :msg="msg" />
   </div>
 </template>
 
-<script>
+<script setup>
 // @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
-
-export default {
-  name: "HomeView",
-  components: {
-    HelloWorld,
-  },
-};
+import HelloWorld from '@/components/HelloWorld.vue'
+import { useStore } from '@/stores'
+const store = useStore()
+const msg = 'welcome ' + store.user.id
 </script>

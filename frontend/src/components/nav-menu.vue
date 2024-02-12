@@ -6,14 +6,14 @@
       </button>
       <div class="date">{{ today }}</div>
     </div>
-    <img class="profile-icon" :src="profileImage" alt="Profile" />
-    <div class="sidebar" :class="{ active: isSidebarActive }" ref="sidebar">
+    <router-link v-if="store.user.id !== null" to="/profile/">{{
+      store.user.username
+    }}</router-link>
+    <router-link v-else to="/signup" class="signup-btn">Sign Up</router-link>
+    <div class="sidebar" :class="{ active: isSidebarActive }" id="sidebar">
       <ul class="sidebar-menu">
         <li class="menu-items">
-          <router-link
-            @click="toggleSidebar"
-            style="display: inline-block; width: 100%"
-            to="/"
+          <router-link @click="toggleSidebar" style="display: inline-block; width: 100%" to="/"
             ><font-awesome-icon icon="home" />Home</router-link
           >
         </li>
@@ -22,9 +22,7 @@
             @click="toggleSidebar"
             style="display: inline-block; width: 100%"
             to="/calendar"
-            ><font-awesome-icon
-              icon="fa-regular fa-calendar-check"
-            />Calendar</router-link
+            ><font-awesome-icon icon="fa-regular fa-calendar-check" />Calendar</router-link
           >
         </li>
         <li class="menu-items">
@@ -40,8 +38,7 @@
             @click="toggleSidebar"
             style="display: inline-block; width: 100%"
             to="/habits"
-            ><font-awesome-icon icon="fa-solid fa-list-check" />Habit
-            Tracker</router-link
+            ><font-awesome-icon icon="fa-solid fa-list-check" />Habit Tracker</router-link
           >
         </li>
         <li class="menu-items">
@@ -49,52 +46,53 @@
             @click="toggleSidebar"
             style="display: inline-block; width: 100%"
             to="/journey"
-            ><font-awesome-icon
-              icon="fa-solid fa-chart-line"
-            />Journey</router-link
+            ><font-awesome-icon icon="fa-solid fa-chart-line" />Journey</router-link
           >
         </li>
       </ul>
     </div>
   </nav>
 </template>
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
+import { useStore } from '@/stores'
+const store = useStore()
 
-<script>
-import image from "./../assets/cat.jpg";
-export default {
-  data() {
-    return {
-      profileImage: image,
-      isSidebarActive: false,
-      today: new Date().toLocaleDateString("en-US", {
-        weekday: "short",
-        day: "numeric",
-        month: "long",
-      }),
-    };
-  },
-  methods: {
-    toggleSidebar(event) {
-      event.stopPropagation();
-      this.isSidebarActive = !this.isSidebarActive;
-      if (this.isSidebarActive) {
-        window.addEventListener("click", this.closeSidebar);
-      } else {
-        window.removeEventListener("click", this.closeSidebar);
-      }
-    },
-    closeSidebar(event) {
-      if (!this.$refs.sidebar.contains(event.target)) {
-        this.isSidebarActive = false;
-        window.removeEventListener("click", this.closeSidebar);
-      }
-    },
-  },
-};
+const isSidebarActive = ref(false)
+const today = new Date().toLocaleDateString('en-US', {
+  weekday: 'short',
+  day: 'numeric',
+  month: 'long'
+})
+
+const toggleSidebar = (event) => {
+  event.stopPropagation()
+  isSidebarActive.value = !isSidebarActive.value
+  if (isSidebarActive.value) {
+    window.addEventListener('click', closeSidebar)
+  } else {
+    window.removeEventListener('click', closeSidebar)
+  }
+}
+
+const closeSidebar = (event) => {
+  if (!document.getElementById('sidebar').contains(event.target)) {
+    isSidebarActive.value = false
+    window.removeEventListener('click', closeSidebar)
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('click', closeSidebar)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('click', closeSidebar)
+})
 </script>
 
 <style lang="scss" scoped>
-@import "./../styles.scss";
+@import './../styles.scss';
 .navbar {
   display: flex;
   justify-content: space-between;

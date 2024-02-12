@@ -61,8 +61,10 @@ const displayedDays = computed(() => {
   })
   return displayedDays
 })
-
 onMounted(() => {
+  createSortableInstances()
+})
+const createSortableInstances = () => {
   for (let index = 0; index < displayedDays.value.length; index++) {
     const element = document.getElementById(index)
     Sortable.create(element, {
@@ -79,10 +81,11 @@ onMounted(() => {
       }
     })
   }
-})
+}
+
 const dropTaskDate = async (task, date) => {
   try {
-    await axios.patch(`/api/tasks/${task}/`, { date: date })
+    await axios.patch(`/api/users/${store.user.id}/tasks/${task}/`, { date: date })
     sortTasks()
     fetchData()
   } catch (error) {
@@ -128,9 +131,10 @@ const handleResize = () => {
 // get tasks list from backend
 const fetchData = () => {
   axios
-    .get('/api/tasks/')
+    .get(`/api/users/${store.user.id}/tasks/`)
     .then((response) => {
       tasks.value = response.data
+      console.log(response.data)
       // Sort tasks after fetching
       sortTasks()
     })
@@ -176,9 +180,12 @@ const saveTaskAndClose = async () => {
       return
     }
     if (store.selectedTask.id) {
-      await axios.put(`/api/tasks/${store.selectedTask.id}/`, store.selectedTask)
+      await axios.patch(
+        `/api/users/${store.user.id}/tasks/${store.selectedTask.id}/`,
+        store.selectedTask
+      )
     } else {
-      await axios.post('/api/tasks/', store.selectedTask)
+      await axios.post(`/api/users/${store.user.id}/tasks/`, store.selectedTask)
     }
     fetchData()
     closeTaskCard()
@@ -198,15 +205,17 @@ const openTaskCard = (event, task, day) => {
   }
   if (!task && !store.isopencard) {
     // create new task
-    store.setIsOpenCard(true)
+
     store.setSelectedTask({
       id: null,
       title: '',
       date: day.date,
       time: null,
       description: '',
-      done: false
+      done: false,
+      user: localStorage.getItem('userId') || null
     })
+    store.setIsOpenCard(true)
   } else if (!task && store.isopencard) {
     saveTaskAndClose()
   } else if (task && !store.isopencard) {

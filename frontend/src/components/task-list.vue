@@ -84,7 +84,7 @@ const store = useStore()
 const updateTaskDoneStatus = async (task) => {
   try {
     task.done = !task.done
-    await axios.patch(`/api/tasks/${task.id}/`, { done: task.done })
+    await axios.patch(`/api/users/${store.user.id}/tasks/${task.id}/`, { done: task.done })
     props.fetchData()
   } catch (error) {
     // Handle errors
@@ -96,7 +96,7 @@ const deleteTask = async (task) => {
   try {
     task.done = !task.done
     closeTaskCard()
-    await axios.delete(`/api/tasks/${task.id}/`, { done: task.done })
+    await axios.delete(`/api/users/${store.user.id}/tasks/${task.id}/`, { done: task.done })
     props.fetchData()
   } catch (error) {
     // Handle errors
@@ -147,9 +147,12 @@ const saveTaskAndClose = async () => {
       return
     }
     if (store.selectedTask.id) {
-      await axios.put(`/api/tasks/${store.selectedTask.id}/`, store.selectedTask)
+      await axios.patch(
+        `/api/users/${store.user.id}/tasks/${store.selectedTask.id}/`,
+        store.selectedTask
+      )
     } else {
-      await axios.post('/api/tasks/', store.selectedTask)
+      await axios.post(`/api/users/${store.user.id}/tasks/`, store.selectedTask)
     }
     props.fetchData()
     closeTaskCard()

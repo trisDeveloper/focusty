@@ -10,21 +10,18 @@ const router = createRouter({
       component: HomeView
     },
     {
-    path: "/calendar",
-    name: "calendar",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import("../views/CalendarView.vue"),
-  },
-  /*{
-    path: "/pomodoro",
-    name: "pomodoro",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import("../views/PomodoroView.vue"),
-  },
+      path: '/calendar',
+      name: 'calendar',
+      component: () => import('../views/CalendarView.vue')
+    },
+    {
+      path: '/pomodoro',
+      name: 'pomodoro',
+      // route level code-splitting
+      // this generates a separate chunk (about.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../components/sign-up.vue')
+    } /*,
 
   {
     path: "/habits",
@@ -41,7 +38,7 @@ const router = createRouter({
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import("../views/JourneyView.vue"),
-  },*/,
+  },*/
   ]
 })
 

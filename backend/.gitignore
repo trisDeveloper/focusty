@@ -18,7 +18,8 @@ static/
 media/
 docs/
 secrets.py
-
+migrations/
+profile_pictures/
 # Editor directories and files
 .idea
 .vscode
