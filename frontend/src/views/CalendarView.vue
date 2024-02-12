@@ -18,6 +18,7 @@
             @click.stop="openTaskCard($event, task, day)"
           >
           </tasklist>
+          <taskCard :fetchData="fetchData" />
         </div>
       </div>
     </div>
@@ -30,7 +31,7 @@ import { useStore } from '@/stores'
 import { computed, ref, onMounted } from 'vue'
 import Sortable from 'sortablejs'
 import tasklist from './../components/task-list.vue'
-
+import taskCard from './../components/task-card.vue'
 const store = useStore()
 
 const today = new Date()
@@ -133,8 +134,7 @@ const fetchData = () => {
   axios
     .get(`/api/users/${store.user.id}/tasks/`)
     .then((response) => {
-      tasks.value = response.data
-      console.log(response.data)
+      tasks.value = response.data || []
       // Sort tasks after fetching
       sortTasks()
     })
