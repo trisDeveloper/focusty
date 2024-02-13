@@ -186,4 +186,18 @@ onUnmounted(() => {
     }
   }
 }
+.signup-btn {
+  color: wheat;
+  text-decoration: none;
+  padding: 7px 10px;
+  border: 1px solid wheat;
+  border-radius: 7px;
+  margin-right: 10px;
+  &:hover {
+    background: rgba(245, 222, 179, 0.15);
+  }
+  &:active {
+    border: none;
+  }
+}
 </style>
