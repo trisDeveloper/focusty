@@ -1,6 +1,11 @@
 from rest_framework import generics
 from .models import User, Task
 from .serializers import TaskSerializer, UserSerializer
+from django.contrib.auth.hashers import check_password
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 class UserList(generics.ListCreateAPIView):
     queryset = User.objects.all()
@@ -24,3 +29,22 @@ class TaskListCreate(generics.ListCreateAPIView):
 class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
+
+
+@csrf_exempt
+def login_view(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        email = data.get('email')
+        password = data.get('password')
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'User does not exist'}, status=404)
+        if password == user.password:
+            return JsonResponse({'success': True, 'id': user.id})
+        else:
+            return JsonResponse({'success': False, 'message': 'Invalid email or password'}, status=400)
+    else:
+        return JsonResponse({'success': False, 'message': 'Method not allowed'}, status=405)

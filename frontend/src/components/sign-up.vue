@@ -51,6 +51,9 @@ const signup = async () => {
       <input type="email" v-model="email" required placeholder="Email" />
       <input type="password" v-model="password" required placeholder="Password" />
       <button class="signup-btn" type="submit">Sign Up</button>
+      <div class="login">
+        Already have an account! <router-link to="/login">Log In.</router-link>
+      </div>
     </form>
   </div>
 </template>
@@ -64,6 +67,18 @@ const signup = async () => {
   p {
     padding: 10px;
     border: 1px solid #e15555;
+  }
+}
+.login {
+  color: #bbb;
+  padding: 10px 0;
+  a {
+    color: rgba(245, 222, 179, 0.8);
+    text-decoration: none;
+    font-weight: bold;
+    &:hover {
+      color: #ffcb6a;
+    }
   }
 }
 form {
