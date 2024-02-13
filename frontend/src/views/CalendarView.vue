@@ -1,30 +1,3 @@
-<template>
-  <div class="container">
-    <div class="calendar">
-      <div v-for="(day, index) in displayedDays" :key="index" class="day">
-        <div class="dayname">
-          <div class="weekday" :style="{ color: getDayColor(day.weekday) }">
-            {{ day.weekday }}
-          </div>
-          <div class="daynum">{{ day.month }} {{ day.day }}</div>
-        </div>
-        <div class="tasks" @click="openTaskCard($event, null, day)" :id="index">
-          <tasklist
-            v-for="task in day.tasks"
-            :key="task.id"
-            :id="task.id"
-            :task="task"
-            :fetchData="fetchData"
-            @click.stop="openTaskCard($event, task, day)"
-          >
-          </tasklist>
-          <taskCard :fetchData="fetchData" />
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup>
 import axios from 'axios'
 import { useStore } from '@/stores'
@@ -242,6 +215,33 @@ window.addEventListener('resize', handleResize)
 handleResize()
 fetchData()
 </script>
+
+<template>
+  <div class="container">
+    <div class="calendar">
+      <div v-for="(day, index) in displayedDays" :key="index" class="day">
+        <div class="dayname">
+          <div class="weekday" :style="{ color: getDayColor(day.weekday) }">
+            {{ day.weekday }}
+          </div>
+          <div class="daynum">{{ day.month }} {{ day.day }}</div>
+        </div>
+        <div class="tasks" @click="openTaskCard($event, null, day)" :id="index">
+          <tasklist
+            v-for="task in day.tasks"
+            :key="task.id"
+            :id="task.id"
+            :task="task"
+            :fetchData="fetchData"
+            @click.stop="openTaskCard($event, task, day)"
+          >
+          </tasklist>
+          <taskCard :fetchData="fetchData" />
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style lang="scss">
 @import './../styles.scss';

@@ -1,19 +1,3 @@
-<template>
-  <div>
-    <div class="error">
-      <p v-if="error">{{ error }}</p>
-    </div>
-    <form @submit.prevent="signup">
-      <h1>Start Productivity Today!</h1>
-      <p>Sign up and try focusty for free</p>
-      <input type="text" v-model="username" autofocus required placeholder="Username" />
-      <input type="email" v-model="email" required placeholder="Email" />
-      <input type="password" v-model="password" required placeholder="Password" />
-      <button class="signup-btn" type="submit">Sign Up</button>
-    </form>
-  </div>
-</template>
-
 <script setup>
 import { ref } from 'vue'
 import axios from 'axios'
@@ -25,7 +9,7 @@ const store = useStore()
 const username = ref('')
 const email = ref('')
 const password = ref('')
-const error = ref('')
+const errormsg = ref(null)
 const signup = async () => {
   try {
     const response = await axios.post('/api/users/', {
@@ -46,19 +30,41 @@ const signup = async () => {
     if (data) {
       for (const key in data) {
         if (Array.isArray(data[key]) && data[key].length > 0) {
-          error.value = data[key][0]
+          errormsg.value = data[key][0]
           break
         }
       }
     }
-    console.log(error.value)
+    console.log(errormsg.value)
   }
 }
 </script>
-
+<template>
+  <div>
+    <div class="error">
+      <p v-if="errormsg">{{ errormsg }}</p>
+    </div>
+    <form @submit.prevent="signup">
+      <h1>Start Productivity Today!</h1>
+      <p>Sign up and try focusty for free</p>
+      <input type="text" v-model="username" autofocus required placeholder="Username" />
+      <input type="email" v-model="email" required placeholder="Email" />
+      <input type="password" v-model="password" required placeholder="Password" />
+      <button class="signup-btn" type="submit">Sign Up</button>
+    </form>
+  </div>
+</template>
 <style lang="scss">
 .error {
-  min-height: 40px;
+  min-height: 70px;
+  color: #e15555;
+  display: flex;
+  justify-content: center;
+  padding: 15px;
+  p {
+    padding: 10px;
+    border: 1px solid #e15555;
+  }
 }
 form {
   width: 100%;
