@@ -43,7 +43,17 @@ def login_view(request):
         except User.DoesNotExist:
             return JsonResponse({'success': False, 'message': 'User does not exist'}, status=404)
         if password == user.password:
-            return JsonResponse({'success': True, 'id': user.id})
+            print(user)
+            return JsonResponse({'success': True, 'user': {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email,
+                'join_date': user.join_date,
+                'country': user.country,
+                'profile_picture': request.build_absolute_uri(user.profile_picture.url),
+                'birthday': user.birthday
+            }})
+
         else:
             return JsonResponse({'success': False, 'message': 'Invalid email or password'}, status=400)
     else:
