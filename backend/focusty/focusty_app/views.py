@@ -48,10 +48,6 @@ def login_view(request):
                 'id': user.id,
                 'username': user.username,
                 'email': user.email,
-                'join_date': user.join_date,
-                'country': user.country,
-                'profile_picture': request.build_absolute_uri(user.profile_picture.url),
-                'birthday': user.birthday
             }})
 
         else:

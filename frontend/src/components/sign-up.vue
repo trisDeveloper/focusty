@@ -28,7 +28,8 @@ const signup = async () => {
       join: response.data.join_date
     })
     router.push('/')
-    window.reload()
+
+    window.location.href = '/'
   } catch (error) {
     let data = error.response.data
     console.log(data)

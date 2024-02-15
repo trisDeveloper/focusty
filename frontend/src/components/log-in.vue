@@ -20,17 +20,13 @@ const login = async () => {
     store.setUser({
       id: response.data.user.id,
       username: response.data.user.username,
-      email: response.data.user.email,
-      pic: response.data.user.profile_picture,
-      country: response.data.user.country,
-      birthday: response.data.user.birthday,
-      join: response.data.user.join_date
+      email: response.data.user.email
     })
-
     router.push('/')
-    window.reload()
+
+    window.location.href = '/'
   } catch (error) {
-    let data = error.response.data.user.message
+    let data = error.response.data.message
     errormsg.value = data
   }
 }

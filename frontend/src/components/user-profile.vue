@@ -2,6 +2,8 @@
 import { ref } from 'vue'
 import axios from 'axios'
 import { useStore } from '@/stores'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const store = useStore()
 const password = ref(null)
 const errormsg = ref(null)
@@ -10,8 +12,13 @@ const updateProfile = async () => {
     let formData = new FormData()
     formData.append('username', store.user.username)
     formData.append('email', store.user.email)
-    formData.append('country', store.user.country)
-    formData.append('birthday', store.user.birthday)
+    if (store.user.country) {
+      formData.append('country', store.user.country)
+    }
+
+    if (store.user.birthday) {
+      formData.append('birthday', store.user.birthday)
+    }
     if (typeof store.user.pic == 'object') {
       formData.append('profile_picture', store.user.pic)
     }
@@ -57,6 +64,33 @@ const uploadPicture = (event) => {
   store.user.pic = file
   updateProfile()
 }
+const deleteAccount = () => {
+  if (confirm('Are you sure you want to delete your account?')) {
+    axios
+      .delete(`/api/users/${store.user.id}/`)
+      .then(() => {
+        //window.reload()
+        localStorage.clear()
+        store.setUser(null)
+        router.push('/')
+        window.location.href = '/'
+      })
+      .catch((error) => {
+        console.error('Error deleting account:', error)
+        errormsg.value = 'Failed to delete your account. Please try again later.'
+      })
+  }
+}
+
+const logout = () => {
+  if (confirm('Are you sure you want to log out?')) {
+    store.setUser(null)
+    localStorage.clear()
+    router.push('/')
+
+    window.location.href = '/'
+  }
+}
 </script>
 
 <template>
@@ -86,22 +120,50 @@ const uploadPicture = (event) => {
         <p v-if="errormsg">{{ errormsg }}</p>
       </div>
       <form @submit.prevent="updateProfile">
-        <label for="email">Email:</label>
-        <input type="email" id="email" v-model="store.user.email" />
-
-        <label for="username">username:</label>
-        <input type="text" id="username" v-model="store.user.username" />
-
-        <label for="password">New Password:</label>
-        <input type="password" id="password" v-model="password" />
-
-        <label for="birthday">Birthday:</label>
-        <input type="birthday" id="birthday" v-model="store.user.birthday" />
-
-        <label for="country">Country:</label>
-        <input type="text" id="country" v-model="store.user.country" />
-        <button type="submit">Update Profile</button>
+        <div>
+          <label for="email">Email:</label>
+          <input placeholder="Email" type="email" id="email" v-model="store.user.email" />
+        </div>
+        <div>
+          <label for="username">username:</label>
+          <input placeholder="Username" type="text" id="username" v-model="store.user.username" />
+        </div>
+        <div>
+          <label for="password">New Password:</label>
+          <input placeholder="Password" type="password" id="password" v-model="password" />
+        </div>
+        <div>
+          <label for="birthday">Birthday:</label>
+          <input
+            placeholder="Birthday"
+            type="birthday"
+            id="birthday"
+            v-model="store.user.birthday"
+          />
+        </div>
+        <div>
+          <label for="country">Country:</label>
+          <input placeholder="Country" type="text" id="country" v-model="store.user.country" />
+        </div>
+        <button type="submit" class="change-pic">Update Profile</button>
       </form>
+      <div class="logout">
+        <h2>Log Out</h2>
+        <p>
+          If you log out, you can access your account, profile, Todos and data at any time after
+          logging in again.
+        </p>
+        <button @click="logout">Log Out</button>
+      </div>
+      <div class="delete">
+        <h2>Delete Account</h2>
+        <p>
+          When you delete your account, your profile, Todos, Data will be removed. And you will not
+          be able to sign in until you create a new account. If you still want to delete the
+          account, click on delete account
+        </p>
+        <button @click="deleteAccount">Delete Account</button>
+      </div>
     </div>
   </div>
 </template>
@@ -168,20 +230,24 @@ const uploadPicture = (event) => {
         border-radius: inherit;
       }
     }
-    .change-pic {
-      color: #fff897;
-      text-decoration: none;
-      padding: 7px 10px;
-      border: 2px solid #fff897;
-      border-radius: 7px;
-      margin-bottom: 15px;
-      &:hover {
-        background: rgba(245, 222, 179, 0.15);
-      }
-      &:active {
-        border: 2px solid transparent;
-      }
-    }
+  }
+}
+.change-pic {
+  color: #fff897;
+  text-decoration: none;
+  text-align: center;
+  background: transparent;
+  width: 200px;
+  padding: 7px 10px;
+  border: 2px solid #fff897;
+  border-radius: 7px;
+  margin-bottom: 15px;
+  font-size: 18px;
+  &:hover {
+    background: rgba(245, 222, 179, 0.15);
+  }
+  &:active {
+    border: 2px solid transparent;
   }
 }
 .edition {
@@ -189,14 +255,63 @@ const uploadPicture = (event) => {
   form {
     display: flex;
     flex-direction: column;
-    input {
-      border: none;
-      background-color: #101027;
-      color: white;
-      margin: 10px 0;
-      padding: 7px 5px;
-      font-size: 20px;
-      border-bottom: 1px solid transparent;
+  }
+  label {
+    display: block;
+  }
+  input {
+    border: none;
+    background-color: #19193d;
+    color: white;
+    margin: 0 0 15px 0;
+    padding: 7px 5px;
+    font-size: 20px;
+    width: 100%;
+    border-radius: 5px;
+    border-bottom: 1px solid transparent;
+    &:focus-visible {
+      outline: none;
+      border-bottom: 1px solid white;
+    }
+  }
+}
+.logout,
+.delete {
+  h2 {
+    margin: 15px 0;
+  }
+  p {
+    color: #ffffff8c;
+    line-height: 20px;
+  }
+  button {
+    color: #ff889c;
+    text-decoration: none;
+    text-align: center;
+    background: #ff889c18;
+    padding: 7px 10px;
+    transition: all 0.3s ease-in-out;
+    border-radius: 7px;
+    margin: 15px 0;
+    border: 2px solid transparent;
+    font-size: 18px;
+    &:hover {
+      background: #ff5f792d;
+    }
+    &:active {
+      border: 2px solid #ff889c;
+    }
+  }
+}
+.delete {
+  button {
+    color: #ff3131;
+    background: #ff313115;
+    &:hover {
+      background: #ff313131;
+    }
+    &:active {
+      border: 2px solid #ff3131;
     }
   }
 }
