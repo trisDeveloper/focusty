@@ -4,14 +4,17 @@ import axios from 'axios'
 import { useStore } from '@/stores'
 const store = useStore()
 const password = ref(null)
+const errormsg = ref(null)
 const updateProfile = async () => {
   try {
     let formData = new FormData()
     formData.append('username', store.user.username)
     formData.append('email', store.user.email)
-    formData.append('profile_picture', store.user.pic)
     formData.append('country', store.user.country)
     formData.append('birthday', store.user.birthday)
+    if (typeof store.user.pic == 'object') {
+      formData.append('profile_picture', store.user.pic)
+    }
 
     if (password.value) {
       formData.append('password', password.value)
@@ -37,7 +40,16 @@ const updateProfile = async () => {
       alert('Failed to update profile.')
     }
   } catch (error) {
-    console.error('Error updating profile:', error)
+    let data = error.response.data
+    console.log(data)
+    if (data) {
+      for (const key in data) {
+        if (Array.isArray(data[key]) && data[key].length > 0) {
+          errormsg.value = `${key} :${data[key][0]}`
+          break
+        }
+      }
+    }
   }
 }
 const uploadPicture = (event) => {
@@ -69,23 +81,25 @@ const uploadPicture = (event) => {
       <p>Join Date: {{ store.user.join }}</p>
     </div>
     <div class="edition">
-      <h2>Edit Profile</h2>
+      <h1>Edit Profile</h1>
+      <div class="error">
+        <p v-if="errormsg">{{ errormsg }}</p>
+      </div>
       <form @submit.prevent="updateProfile">
         <label for="email">Email:</label>
-        <input type="email" id="email" v-model="store.user.email" /><br />
+        <input type="email" id="email" v-model="store.user.email" />
 
         <label for="username">username:</label>
-        <input type="text" id="username" v-model="store.user.username" /><br />
+        <input type="text" id="username" v-model="store.user.username" />
 
         <label for="password">New Password:</label>
-        <input type="password" id="password" v-model="password" /><br />
+        <input type="password" id="password" v-model="password" />
 
         <label for="birthday">Birthday:</label>
-        <input type="birthday" id="birthday" v-model="store.user.birthday" /><br />
+        <input type="birthday" id="birthday" v-model="store.user.birthday" />
 
         <label for="country">Country:</label>
-        <input type="text" id="country" v-model="store.user.country" /><br />
-
+        <input type="text" id="country" v-model="store.user.country" />
         <button type="submit">Update Profile</button>
       </form>
     </div>
@@ -93,9 +107,20 @@ const uploadPicture = (event) => {
 </template>
 
 <style lang="scss">
-.profile {
-  margin-top: 20px;
+.error {
+  min-height: 50px;
+  color: #e15555;
   display: flex;
+  padding: 5px;
+  p {
+    padding: 10px;
+    border: 1px solid #e15555;
+  }
+}
+.profile {
+  margin: 20px auto;
+  display: flex;
+  max-width: 1000px;
   justify-content: center;
   flex-wrap: wrap;
   .intro,
@@ -107,12 +132,17 @@ const uploadPicture = (event) => {
     border-radius: 15px;
   }
   .intro {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     h1 {
-      font-size: 35px;
+      font-size: 32px;
       font-weight: bold;
+      max-width: 98%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .image {
       height: 150px;
@@ -154,13 +184,20 @@ const uploadPicture = (event) => {
     }
   }
 }
-form input {
-  border: none;
-  background-color: #101027;
-  color: white;
-  margin: 10px 0;
-  padding: 7px 5px;
-  font-size: 20px;
-  border-bottom: 1px solid transparent;
+.edition {
+  flex: 2;
+  form {
+    display: flex;
+    flex-direction: column;
+    input {
+      border: none;
+      background-color: #101027;
+      color: white;
+      margin: 10px 0;
+      padding: 7px 5px;
+      font-size: 20px;
+      border-bottom: 1px solid transparent;
+    }
+  }
 }
 </style>
