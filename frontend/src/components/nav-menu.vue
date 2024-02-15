@@ -6,9 +6,14 @@
       </button>
       <div class="date">{{ today }}</div>
     </div>
-    <router-link v-if="store.user.id !== null" to="/profile/">{{
-      store.user.username
-    }}</router-link>
+    <div v-if="store.user.id !== null" class="profile-icon">
+      <router-link to="/profile/">
+        <img v-if="store.user.pic !== null" :src="store.user.pic" alt="profile picture" />
+        <span v-else>
+          {{ store.user.username[0].toUpperCase() }}
+        </span>
+      </router-link>
+    </div>
     <router-link v-else to="/signup" class="signup-btn">Sign Up</router-link>
     <div class="sidebar" :class="{ active: isSidebarActive }" id="sidebar">
       <ul class="sidebar-menu">
@@ -124,7 +129,30 @@ onUnmounted(() => {
   margin-right: 10px;
   height: 40px;
   width: 40px;
+  background: #9eff86;
+  overflow: hidden;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  a {
+    text-decoration: none;
+    position: relative;
+    color: #06061c;
+    width: 100%;
+    height: 100%;
+    font-weight: bold;
+    font-size: 26px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
 }
 
 .sidebar {

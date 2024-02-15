@@ -5,7 +5,11 @@ export const useStore = defineStore('storeId', {
     user: {
       id: null,
       username: null,
-      email: null
+      email: null,
+      pic: null,
+      birthday: null,
+      country: null,
+      join: null
     },
     isopencard: false,
     selectedTask: {

@@ -2,6 +2,8 @@
 import { ref } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import { useStore } from '@/stores'
+const store = useStore()
 const router = useRouter()
 
 const email = ref('')
@@ -14,11 +16,21 @@ const login = async () => {
       password: password.value
     })
     // Handle successful login
-    localStorage.setItem('userId', response.data.id)
+    localStorage.setItem('userId', response.data.user.id)
+    store.setUser({
+      id: response.data.user.id,
+      username: response.data.user.username,
+      email: response.data.user.email,
+      pic: response.data.user.profile_picture,
+      country: response.data.user.country,
+      birthday: response.data.user.birthday,
+      join: response.data.user.join_date
+    })
+
     router.push('/')
     window.reload()
   } catch (error) {
-    let data = error.response.data.message
+    let data = error.response.data.user.message
     errormsg.value = data
   }
 }

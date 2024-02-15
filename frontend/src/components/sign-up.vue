@@ -22,15 +22,20 @@ const signup = async () => {
     store.setUser({
       id: response.data.id,
       username: response.data.username,
-      email: response.data.email
+      email: response.data.email,
+      pic: response.data.profile_picture,
+      country: response.data.country,
+      join: response.data.join_date
     })
     router.push('/')
+    window.reload()
   } catch (error) {
     let data = error.response.data
+    console.log(data)
     if (data) {
       for (const key in data) {
         if (Array.isArray(data[key]) && data[key].length > 0) {
-          errormsg.value = data[key][0]
+          errormsg.value = `${key} :${data[key][0]}`
           break
         }
       }

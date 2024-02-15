@@ -1,14 +1,17 @@
 <script setup>
-import { onMounted } from 'vue'
 import { useStore } from '@/stores'
+import axios from 'axios'
+import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'
 import NavMenu from './components/nav-menu.vue'
-import axios from 'axios'
-const store = useStore()
-onMounted(async () => {
-  await fetchUser()
-})
 
+const store = useStore()
+
+onMounted(async () => {
+  if (localStorage.getItem('userId')) {
+    await fetchUser()
+  }
+})
 const fetchUser = async () => {
   try {
     const response = await axios.get(`/api/users/${localStorage.getItem('userId')}`)
@@ -16,8 +19,13 @@ const fetchUser = async () => {
     store.setUser({
       id: userData.id,
       username: userData.username,
-      email: userData.email
+      email: userData.email,
+      pic: userData.profile_picture,
+      country: userData.country,
+      birthday: userData.birthday,
+      join: userData.join_date
     })
+    console.log(store.user)
   } catch (error) {
     console.error('Error fetching user data:', error)
   }
