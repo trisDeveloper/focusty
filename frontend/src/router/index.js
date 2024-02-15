@@ -17,27 +17,27 @@ const router = createRouter({
     {
       path: '/signup',
       name: 'sign up',
-      component: () => import('../components/sign-up.vue')
+      component: () => import('../components/user/sign-up.vue')
     },
     {
       path: '/login',
       name: 'log in',
-      component: () => import('../components/log-in.vue')
+      component: () => import('../components/user/log-in.vue')
     },
     {
       path: '/profile',
       name: 'My profile',
-      component: () => import('../components/user-profile.vue')
-    } /*,
+      component: () => import('../components/user/user-profile.vue')
+    },
 
-  {
-    path: "/habits",
-    name: "habits",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import("../views/HabitView.vue"),
-  } 
+    {
+      path: '/pomodoro',
+      name: 'Pomodoro',
+      // route level code-splitting
+      // this generates a separate chunk (about.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/pomodoroView.vue')
+    } /*
   {
     path: "/journey",
     name: "journey",

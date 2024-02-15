@@ -81,7 +81,6 @@ const deleteAccount = () => {
       })
   }
 }
-
 const logout = () => {
   if (confirm('Are you sure you want to log out?')) {
     store.setUser(null)
@@ -91,6 +90,21 @@ const logout = () => {
     window.location.href = '/'
   }
 }
+const deleteImage = async () => {
+  try {
+    const payload = {
+      profile_picture: null
+    }
+    store.user.pic = null
+    await axios.patch(`/api/users/${store.user.id}/`, payload, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
 </script>
 
 <template>
@@ -98,6 +112,12 @@ const logout = () => {
     <div class="intro">
       <h1>Hello {{ store.user.username }}</h1>
       <div class="image">
+        <font-awesome-icon
+          v-if="store.user.pic !== null"
+          icon="fa-regular fa-trash-can"
+          class="trash"
+          @click="deleteImage()"
+        />
         <img v-if="store.user.pic !== null" :src="store.user.pic" alt="profile picture" />
         <span v-else>
           {{ store.user.username[0].toUpperCase() }}
@@ -208,6 +228,7 @@ const logout = () => {
     }
     .image {
       height: 150px;
+      position: relative;
       color: #06061c;
       background: #fff897;
       width: 150px;
@@ -228,6 +249,19 @@ const logout = () => {
         object-fit: cover;
         border: 3px solid #fff897;
         border-radius: inherit;
+      }
+      .trash {
+        position: absolute;
+        color: #fff;
+        font-size: 18px;
+        background: rgb(0 0 0 / 60%);
+        padding: 3px;
+        border-radius: 4px;
+        top: 5px;
+        right: 5px;
+        &:hover {
+          color: #ff3f3b;
+        }
       }
     }
   }

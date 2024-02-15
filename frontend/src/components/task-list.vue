@@ -35,6 +35,7 @@ props.fetchData()
 .tasks {
   padding: 5px;
   flex-grow: 1;
+  min-height: 100px;
   .task {
     display: flex;
     align-items: stretch;
