@@ -32,7 +32,7 @@ const login = async () => {
 }
 </script>
 <template>
-  <div>
+  <div style="text-align: center">
     <div class="error">
       <p v-if="errormsg">{{ errormsg }}</p>
     </div>

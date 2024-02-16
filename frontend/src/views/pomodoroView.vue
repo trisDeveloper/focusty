@@ -1,12 +1,12 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 const longInterval = ref(3)
 const sessions = ref(0)
 const label = ref('')
-const timerRunning = ref(false)
+const settings = ref(false)
 const timeLeft = ref(0)
-const paused = ref(false)
-
+const paused = ref(true)
+const activeButton = ref(0)
 const focus = ref({
   duration: 0.2,
   title: 'Focus'
@@ -23,15 +23,18 @@ const longBreak = ref({
 let timerInterval
 
 const focusing = () => {
+  activeButton.value = 0
   timeLeft.value = focus.value.duration * 60
   label.value = focus.value.title
   sessions.value++
 }
 const shortresting = () => {
+  activeButton.value = 1
   timeLeft.value = shortBreak.value.duration * 60
   label.value = shortBreak.value.title
 }
 const longresting = () => {
+  activeButton.value = 2
   timeLeft.value = longBreak.value.duration * 60
   label.value = longBreak.value.title
 }
@@ -52,7 +55,6 @@ const setNextStep = () => {
 }
 
 const startTimer = () => {
-  timerRunning.value = true
   setNextStep()
   timerInterval = setInterval(() => {
     if (!paused.value) {
@@ -67,9 +69,11 @@ const startTimer = () => {
 
 const stopTimer = () => {
   clearInterval(timerInterval)
-  timerRunning.value = false
-  sessions.value = 1
+  sessions.value = 0
+  timeLeft.value = ''
   label.value = ''
+  paused.value = true
+  startTimer()
 }
 
 const togglePause = () => {
@@ -79,50 +83,222 @@ const togglePause = () => {
 const formatTime = (seconds) => {
   const minutes = Math.floor(seconds / 60)
   const remainingSeconds = seconds % 60
-  return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`
+  return `${minutes < 10 ? '0' : ''}${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`
 }
+
+const togglesettings = (event) => {
+  event.stopPropagation()
+  settings.value = !settings.value
+  if (settings.value) {
+    window.addEventListener('click', closesettings)
+  } else {
+    window.removeEventListener('click', closesettings)
+  }
+}
+
+const closesettings = (event) => {
+  if (!document.querySelector('.settings').contains(event.target)) {
+    settings.value = false
+    window.removeEventListener('click', closesettings)
+  }
+}
+
+onMounted(() => {
+  startTimer()
+  window.addEventListener('click', closesettings)
+})
+onUnmounted(() => {
+  window.removeEventListener('click', closesettings)
+})
 </script>
 
 <template>
   <div class="pomodoro-timer">
-    <h1>Pomodoro Timer</h1>
-    <font-awesome-icon icon="fa-solid fa-gear" />
-    <div v-if="!timerRunning">
-      <label for="work-duration">Focus Duration (minutes):</label>
-      <input type="number" id="work-duration" v-model="focus.duration" />
-      <br />
-      <label for="break-duration">Break Duration (minutes):</label>
-      <input type="number" id="break-duration" v-model="shortBreak.duration" />
-      <br />
-      <label for="long-duration">Long Break Duration (minutes):</label>
-      <input type="number" id="long-duration" v-model="longBreak.duration" />
-      <br />
-      <label for="longInterval">Long Break interval:</label>
-      <input type="number" id="longInterval" v-model="longInterval" />
-      <br />
-      <button @click="startTimer">Start</button>
-    </div>
-    <div v-else>
-      <div>
-        <button @click="focusing">Focus</button>
-        <button @click="shortresting">Short Break</button>
-        <button @click="longresting">Long Break</button>
+    <h4>Pomodoro Timer</h4>
+    <font-awesome-icon icon="fa-solid fa-gear" class="gear" @click="togglesettings" />
+    <div v-if="settings" class="settings">
+      <h3><font-awesome-icon icon="fa-regular fa-clock" /> Timer (minutes)</h3>
+      <div class="time">
+        <div>
+          <label for="work-duration">Focus</label>
+          <input type="number" id="work-duration" v-model="focus.duration" />
+        </div>
+        <div>
+          <label for="break-duration">Break</label>
+          <input type="number" id="break-duration" v-model="shortBreak.duration" />
+        </div>
+        <div>
+          <label for="long-duration">Long Break</label>
+          <input type="number" id="long-duration" v-model="longBreak.duration" />
+        </div>
       </div>
-      <p>{{ label }} {{ formatTime(timeLeft) }}</p>
+      <div class="interval">
+        <label for="longInterval">Long Break interval</label>
+        <input type="number" id="longInterval" v-model="longInterval" />
+      </div>
+    </div>
+    <div class="timer">
+      <div class="sessions">
+        <button :class="{ active: activeButton === 0 }" @click="focusing">Pomodoro</button>
+        <button :class="{ active: activeButton === 1 }" @click="shortresting">Short Break</button>
+        <button :class="{ active: activeButton === 2 }" @click="longresting">Long Break</button>
+      </div>
+
+      <div class="time">{{ formatTime(timeLeft) }}</div>
       <div class="actions">
-        <button @click="togglePause">
+        <button @click="togglePause" class="pause">
           <font-awesome-icon v-if="!paused" icon="fa-solid fa-pause" />
           <font-awesome-icon v-else icon="fa-solid fa-forward-step" />
         </button>
-        <button @click="stopTimer">stop</button>
+        <button @click="stopTimer" class="stop">stop</button>
       </div>
       <p>session number {{ sessions }}</p>
     </div>
   </div>
 </template>
-<style scoped>
+<style lang="scss">
 .pomodoro-timer {
-  text-align: center;
+  margin: 10px auto;
+  position: relative;
+  max-width: 500px;
+  border: 1px solid;
+  border-radius: 8px;
+  padding: 7px;
   margin-top: 50px;
+  * {
+    transition: all 0.2s ease-in-out;
+  }
+  h4 {
+    font-size: 17px;
+    padding: 15px;
+    color: #ffffff54;
+  }
+  .gear {
+    position: absolute;
+    top: 15px;
+    padding: 5px;
+    right: 15px;
+    font-size: 23px;
+    color: #ffffffc9;
+    &:hover {
+      color: white;
+    }
+  }
+}
+.settings {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  max-width: calc(100% - 10px);
+  transform: translate(-50%, -50%);
+  border-radius: 10px;
+  padding: 20px;
+  background-color: #06061c;
+  border: 1px solid #8269ac;
+  box-shadow: 0px 2px 10px 2px #03030e41;
+  z-index: 10;
+  input {
+    border-radius: 4px;
+    background-color: #121231;
+    color: white;
+    width: 100%;
+    padding: 5px;
+    font-size: 20px;
+    border: 1px solid transparent;
+    &:focus-visible {
+      outline: none;
+      border: 1px solid #ffffff5e;
+    }
+  }
+  h3 {
+    margin: 15px 0;
+    color: #ffffffa6;
+  }
+  .time {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    align-items: flex-end;
+    justify-content: center;
+    flex-wrap: nowrap;
+    margin: 0 0 20px 0;
+  }
+  .interval {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    input {
+      max-width: 80px;
+      margin-left: 5px;
+    }
+  }
+}
+.timer {
+  text-align: center;
+  padding: 15px 0;
+  background: #5a5a8514;
+  border-radius: 8px;
+  .sessions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: nowrap;
+    margin-bottom: 15px;
+    button {
+      width: 110px;
+      border: none;
+      overflow: hidden;
+      background: transparent;
+      color: white;
+      border-radius: 4px;
+      font-size: 18px;
+      padding: 5px 7px;
+      white-space: nowrap;
+      &:hover {
+        background: #06061c;
+      }
+    }
+    .active {
+      color: #ff889c;
+      background: #ff889c18;
+    }
+  }
+  p {
+    color: #ffffff54;
+  }
+  .time {
+    font-size: 100px;
+    font-weight: bold;
+  }
+  .pause {
+    border: none;
+    overflow: hidden;
+    background: transparent;
+    border-radius: 4px;
+    font-size: 18px;
+    padding: 10px 15px;
+    white-space: nowrap;
+
+    color: #ff889c;
+    background: #ff889c18;
+  }
+
+  .stop {
+    border: none;
+    overflow: hidden;
+    background: transparent;
+    border-radius: 4px;
+    font-size: 18px;
+    padding: 10px 15px;
+    white-space: nowrap;
+
+    color: #79ff9a;
+    background: #79ff9a18;
+  }
 }
 </style>

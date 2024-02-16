@@ -228,4 +228,9 @@ onUnmounted(() => {
     border: none;
   }
 }
+@media (max-width: 300px) {
+  .date {
+    font-size: 18px !important;
+  }
+}
 </style>
