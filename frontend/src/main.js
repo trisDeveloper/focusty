@@ -17,10 +17,12 @@ import {
   faBars,
   faCalendarDays,
   faChartLine,
+  faForwardStep,
   faGear,
   faHome,
   faHourglass,
   faListCheck,
+  faPause,
   faPencil
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -42,7 +44,9 @@ library.add(
   faCalendarDays,
   faTrashCan,
   faClock,
-  faGear
+  faGear,
+  faPause,
+  faForwardStep
 )
 
 const app = createApp(App)
