@@ -17,6 +17,7 @@ import {
   faBars,
   faCalendarDays,
   faChartLine,
+  faGear,
   faHome,
   faHourglass,
   faListCheck,
@@ -40,7 +41,8 @@ library.add(
   faPencil,
   faCalendarDays,
   faTrashCan,
-  faClock
+  faClock,
+  faGear
 )
 
 const app = createApp(App)
