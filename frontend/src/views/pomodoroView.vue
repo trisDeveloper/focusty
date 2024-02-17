@@ -121,20 +121,30 @@ onUnmounted(() => {
       <div class="time">
         <div>
           <label for="work-duration">Focus</label>
-          <input type="number" id="work-duration" v-model="focus.duration" />
+          <input type="number" id="work-duration" v-model="focus.duration" @change="stopTimer" />
         </div>
         <div>
           <label for="break-duration">Break</label>
-          <input type="number" id="break-duration" v-model="shortBreak.duration" />
+          <input
+            type="number"
+            id="break-duration"
+            v-model="shortBreak.duration"
+            @change="stopTimer"
+          />
         </div>
         <div>
           <label for="long-duration">Long Break</label>
-          <input type="number" id="long-duration" v-model="longBreak.duration" />
+          <input
+            type="number"
+            id="long-duration"
+            v-model="longBreak.duration"
+            @change="stopTimer"
+          />
         </div>
       </div>
       <div class="interval">
         <label for="longInterval">Long Break interval</label>
-        <input type="number" id="longInterval" v-model="longInterval" />
+        <input type="number" id="longInterval" v-model="longInterval" @change="stopTimer" />
       </div>
     </div>
     <div class="timer">
@@ -161,7 +171,7 @@ onUnmounted(() => {
   margin: 10px auto;
   position: relative;
   max-width: 500px;
-  border: 1px solid;
+  border: 2px solid rgba(255, 255, 255, 0.031372549);
   border-radius: 8px;
   padding: 7px;
   margin-top: 50px;
@@ -282,10 +292,15 @@ onUnmounted(() => {
     border-radius: 4px;
     font-size: 18px;
     padding: 10px 15px;
+    margin: 10px;
     white-space: nowrap;
-
-    color: #ff889c;
-    background: #ff889c18;
+    color: #2dff61;
+    background: #79ff9a18;
+    transition: all 0.3s ease-in;
+    &:hover {
+      background: #64ff8b3d;
+      box-shadow: 0px 0px 8px #4fff7b40;
+    }
   }
 
   .stop {
@@ -293,12 +308,17 @@ onUnmounted(() => {
     overflow: hidden;
     background: transparent;
     border-radius: 4px;
+    margin: 10px;
     font-size: 18px;
     padding: 10px 15px;
     white-space: nowrap;
-
-    color: #79ff9a;
-    background: #79ff9a18;
+    color: #ff889c;
+    background: #ff889c18;
+    transition: all 0.3s ease-in;
+    &:hover {
+      background: #ff819638;
+      box-shadow: 0px 0px 8px #ff819648;
+    }
   }
 }
 </style>
