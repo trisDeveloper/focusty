@@ -1,10 +1,13 @@
 <script setup>
+import endaudio from '@/assets/pomodoro.mp3'
 import { ref, onMounted, onUnmounted } from 'vue'
 const longInterval = ref(4)
 const sessions = ref(0)
 const label = ref('')
 const settings = ref(false)
 const timeLeft = ref(0)
+let notification = null
+const audio = new Audio(endaudio)
 const paused = ref(true)
 const activeButton = ref(0)
 const focus = ref({
@@ -41,13 +44,13 @@ const longresting = () => {
 
 const setNextStep = () => {
   if (label.value == shortBreak.value.title || label.value == longBreak.value.title) {
-    //setnotification("Rest", "focus");
+    setnotification('Rest', 'focus')
     focusing()
   } else if (label.value == focus.value.title && sessions.value % longInterval.value == 0) {
-    //setnotification("Focus", "take a long rest");
+    setnotification('Focus', 'take a long rest')
     longresting()
   } else if (label.value == focus.value.title) {
-    //setnotification("Focus", "take a short rest");
+    setnotification('Focus', 'take a short rest')
     shortresting()
   } else {
     focusing()
@@ -63,6 +66,7 @@ const startTimer = () => {
     if (timeLeft.value === 0) {
       clearInterval(timerInterval)
       startTimer()
+      audio.play()
     }
   }, 1000)
 }
@@ -104,7 +108,14 @@ const closesettings = (event) => {
     }
   }
 }
-
+const setnotification = (done, next) => {
+  notification = new Notification('Pomodoro', {
+    body: `${done} session is over it's time to ${next}`
+  })
+  notification.onclick = () => {
+    window.focus()
+  }
+}
 onMounted(() => {
   startTimer()
   window.addEventListener('click', closesettings)

@@ -19,7 +19,7 @@ const updateProfile = async () => {
     if (store.user.birthday) {
       formData.append('birthday', store.user.birthday)
     }
-    if (typeof store.user.pic == 'object') {
+    if (store.user.pic && typeof store.user.pic == 'object') {
       formData.append('profile_picture', store.user.pic)
     }
 
