@@ -25,7 +25,6 @@ const fetchUser = async () => {
       birthday: userData.birthday,
       join: userData.join_date
     })
-    console.log(store.user)
   } catch (error) {
     console.error('Error fetching user data:', error)
   }

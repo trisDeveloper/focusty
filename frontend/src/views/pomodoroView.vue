@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-const longInterval = ref(3)
+const longInterval = ref(4)
 const sessions = ref(0)
 const label = ref('')
 const settings = ref(false)
@@ -8,15 +8,15 @@ const timeLeft = ref(0)
 const paused = ref(true)
 const activeButton = ref(0)
 const focus = ref({
-  duration: 0.2,
+  duration: 25,
   title: 'Focus'
 })
 const shortBreak = ref({
-  duration: 0.05,
+  duration: 5,
   title: 'Short Break'
 })
 const longBreak = ref({
-  duration: 0.1,
+  duration: 15,
   title: 'Long Break'
 })
 
@@ -97,9 +97,11 @@ const togglesettings = (event) => {
 }
 
 const closesettings = (event) => {
-  if (!document.querySelector('.settings').contains(event.target)) {
-    settings.value = false
-    window.removeEventListener('click', closesettings)
+  if (settings.value) {
+    if (!document.querySelector('.settings').contains(event.target)) {
+      settings.value = false
+      window.removeEventListener('click', closesettings)
+    }
   }
 }
 
@@ -166,11 +168,12 @@ onUnmounted(() => {
     </div>
   </div>
 </template>
+
 <style lang="scss">
 .pomodoro-timer {
   margin: 10px auto;
   position: relative;
-  max-width: 500px;
+  max-width: 650px;
   border: 2px solid rgba(255, 255, 255, 0.031372549);
   border-radius: 8px;
   padding: 7px;

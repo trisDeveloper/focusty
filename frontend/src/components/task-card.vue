@@ -81,7 +81,16 @@ const deleteTask = async (task) => {
     console.error(error)
   }
 }
-
+const updateTaskDoneStatus = async (task) => {
+  try {
+    task.done = !task.done
+    await axios.patch(`/api/users/${store.user.id}/tasks/${task.id}/`, { done: task.done })
+    props.fetchData()
+  } catch (error) {
+    // Handle errors
+    console.error(error)
+  }
+}
 const closeTaskCard = () => {
   store.setIsOpenCard(false)
 

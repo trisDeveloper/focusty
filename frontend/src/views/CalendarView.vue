@@ -6,13 +6,13 @@ import Sortable from 'sortablejs'
 import tasklist from './../components/task-list.vue'
 import taskCard from './../components/task-card.vue'
 const store = useStore()
-
+const props = defineProps(['filterdays'])
 const today = new Date()
 const tasks = ref([])
 // resposive week view
 const isWideScreen = ref(window.innerWidth >= 1075 || window.innerWidth <= 600)
 
-const next7Days = computed(() => {
+const nextDays = computed(() => {
   const nextDays = []
   for (let i = 0; i < 7; i++) {
     const nextDay = new Date()
@@ -28,16 +28,26 @@ const next7Days = computed(() => {
 })
 
 const displayedDays = computed(() => {
-  const daysToDisplay = isWideScreen.value ? 7 : 4
-  const displayedDays = next7Days.value.slice(0, daysToDisplay)
-  displayedDays.forEach((day) => {
-    day.tasks = getTasksForDate(day.date)
-  })
-  return displayedDays
+  if (props.filterdays) {
+    const displayedDays = [nextDays.value[0]]
+    displayedDays.forEach((day) => {
+      day.tasks = getTasksForDate(day.date)
+    })
+    return displayedDays
+  } else {
+    const daysToDisplay = isWideScreen.value ? 7 : 4
+    const displayedDays = nextDays.value.slice(0, daysToDisplay)
+    displayedDays.forEach((day) => {
+      day.tasks = getTasksForDate(day.date)
+    })
+    return displayedDays
+  }
 })
 onMounted(() => {
   createSortableInstances()
+  fetchData()
 })
+
 const createSortableInstances = () => {
   for (let index = 0; index < displayedDays.value.length; index++) {
     const element = document.getElementById(index)
@@ -104,16 +114,18 @@ const handleResize = () => {
 
 // get tasks list from backend
 const fetchData = () => {
-  axios
-    .get(`/api/users/${store.user.id}/tasks/`)
-    .then((response) => {
-      tasks.value = response.data || []
-      // Sort tasks after fetching
-      sortTasks()
-    })
-    .catch((error) => {
-      console.error(error)
-    })
+  if (localStorage.getItem('userId')) {
+    axios
+      .get(`/api/users/${localStorage.getItem('userId')}/tasks/`)
+      .then((response) => {
+        tasks.value = response.data || []
+        // Sort tasks after fetching
+        sortTasks()
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  }
 }
 
 const sortTasks = () => {
@@ -142,7 +154,7 @@ const closeTaskCard = () => {
     hours: 0,
     minutes: 0
   }
-  document.body.removeEventListener('click', closeTaskCard)
+  window.removeEventListener('click', closeTaskCard)
 }
 
 const saveTaskAndClose = async () => {
@@ -205,9 +217,9 @@ const openTaskCard = (event, task, day) => {
     saveTaskAndClose()
   }
   if (!store.isopencard) {
-    document.body.addEventListener('click', closeTaskCard)
+    window.addEventListener('click', closeTaskCard)
   } else {
-    document.body.removeEventListener('click', closeTaskCard)
+    window.removeEventListener('click', closeTaskCard)
   }
 }
 

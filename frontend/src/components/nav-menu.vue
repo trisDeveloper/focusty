@@ -38,22 +38,14 @@
             ><font-awesome-icon icon="hourglass" />Pomodoro</router-link
           >
         </li>
-        <li class="menu-items">
-          <router-link
-            @click="toggleSidebar"
-            style="display: inline-block; width: 100%"
-            to="/habits"
-            ><font-awesome-icon icon="fa-solid fa-list-check" />Habit Tracker</router-link
-          >
-        </li>
-        <li class="menu-items">
+        <!-- <li class="menu-items">
           <router-link
             @click="toggleSidebar"
             style="display: inline-block; width: 100%"
             to="/journey"
             ><font-awesome-icon icon="fa-solid fa-chart-line" />Journey</router-link
           >
-        </li>
+        </li> -->
       </ul>
     </div>
   </nav>
