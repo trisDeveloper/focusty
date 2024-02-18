@@ -1,4 +1,5 @@
 <script setup>
+import axios from 'axios'
 import endaudio from '@/assets/pomodoro.mp3'
 import { ref, onMounted, onUnmounted } from 'vue'
 const longInterval = ref(4)
@@ -65,6 +66,18 @@ const startTimer = () => {
     }
     if (timeLeft.value === 0) {
       clearInterval(timerInterval)
+      if (label.value === 'Focus') {
+        axios
+          .post(`/api/users/${localStorage.getItem('userId')}/pomodoros/`, {
+            minutes: focus.value.duration
+          })
+          .then((response) => {
+            console.log(response.data)
+          })
+          .catch((error) => {
+            console.error(error)
+          })
+      }
       startTimer()
       audio.play()
     }

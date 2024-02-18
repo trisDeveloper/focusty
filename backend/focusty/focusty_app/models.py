@@ -22,3 +22,8 @@ class Task(models.Model):
     
     def __str__(self):
         return self.title
+    
+class Pomodoro(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pomodoro')
+    date = models.DateField(auto_now_add=True)
+    minutes = models.IntegerField(default=0)
