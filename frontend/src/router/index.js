@@ -34,15 +34,15 @@ const router = createRouter({
       path: '/pomodoro',
       name: 'Pomodoro',
       component: () => import('../views/pomodoroView.vue')
-    } /*
-  {
-    path: "/journey",
-    name: "journey",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import("../views/JourneyView.vue"),
-  },*/
+    },
+    {
+      path: '/journey',
+      name: 'journey',
+      // route level code-splitting
+      // this generates a separate chunk (about.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../components/pomo-chart.vue')
+    }
   ]
 })
 
