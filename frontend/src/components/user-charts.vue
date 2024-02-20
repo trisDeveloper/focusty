@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-
+const userId = localStorage.getItem('userId')
 const height = ref(window.innerWidth >= 600 ? 200 : 400)
 const handleResize = () => {
   height.value = window.innerWidth >= 600 ? 200 : 400
@@ -11,13 +11,16 @@ handleResize()
 </script>
 
 <template>
-  <div>
+  <div v-if="userId">
     <div class="chart">
       <canvas ref="pomodoroChart" width="400" :height="height" class="canvas"></canvas>
     </div>
     <div class="chart">
       <canvas ref="taskChart" width="400" :height="height" class="canvas"></canvas>
     </div>
+  </div>
+  <div v-else style="text-align: center; padding: 50px">
+    You have to sign up or log In to see your progress
   </div>
 </template>
 
