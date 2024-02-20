@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-$ll28-c=vwvzhz1p8%o5-ct(0r0&$vf@=+)c5k2frf(ncpufa-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['trisdev.pythonanywhere.com']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
