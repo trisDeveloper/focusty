@@ -3,9 +3,10 @@ from .models import User, Task, Pomodoro
 from .serializers import TaskSerializer, UserSerializer, PomodoroSerializer
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-import json
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
+import json
+from django.db.models import Count
 from django.db.models import Sum
 class UserList(generics.ListCreateAPIView):
     queryset = User.objects.all()
@@ -25,11 +26,18 @@ class TaskListCreate(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         user_id = self.kwargs['user_id']
         serializer.save(user_id=user_id)
-
+    
 class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
 
+@api_view(['GET'])
+def tasks_count(request, user_id):
+    tasks_count_by_date = Task.objects.filter(user_id=user_id)\
+        .values('date')\
+        .annotate(tasks_count=Count('id'))
+
+    return Response(tasks_count_by_date)
 
 @csrf_exempt
 def login_view(request):
@@ -59,8 +67,6 @@ def login_view(request):
 class PomodoroDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Pomodoro.objects.all()
     serializer_class = PomodoroSerializer
-
-from django.db.models.functions import TruncDate
 
 class PomodoroListCreate(generics.ListCreateAPIView):
     serializer_class = PomodoroSerializer
