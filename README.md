@@ -14,6 +14,8 @@ Focusty is a full-stack productivity application meticulously crafted with Vue, 
 
 link: https://trisdeveloper.github.io/focusty/
 
+![Focusty](https://raw.githubusercontent.com/trisDeveloper/focusty/main/Screenshot%20from%202024-02-22%2013-07-09.png)
+
 ## Development Tools 🛠️
 
 ### Frontend
