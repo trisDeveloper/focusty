@@ -16,6 +16,8 @@ link: https://trisdeveloper.github.io/focusty/
 
 ![Focusty](https://raw.githubusercontent.com/trisDeveloper/focusty/main/Screenshot%20from%202024-02-22%2013-07-09.png)
 
+[![Focusty youtube video](https://img.youtube.com/vi/wrSbkanFiS0/0.jpg)](https://youtu.be/wrSbkanFiS0)
+
 ## Development Tools 🛠️
 
 ### Frontend
@@ -34,7 +36,6 @@ link: https://trisdeveloper.github.io/focusty/
 - Django Rest Framework
 - django-cors-headers
 - Djoser
-
 
 ## Usage 📝
 
@@ -65,7 +66,7 @@ Leveraging a comprehensive tech stack comprising Vue, Vite, Axios, Chart.js... f
 
 ### Refinement 🛠️
 
-Throughout the development process, feedback loops were integral to refining and enhancing Focusty's functionality and usability. Iterative improvements, bug fixes, and performance optimizations were rigorously implemented to ensure that Focusty exceeded user expectations. 
+Throughout the development process, feedback loops were integral to refining and enhancing Focusty's functionality and usability. Iterative improvements, bug fixes, and performance optimizations were rigorously implemented to ensure that Focusty exceeded user expectations.
 
 ## Roadmap 🗺️
 
