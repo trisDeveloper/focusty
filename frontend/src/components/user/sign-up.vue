@@ -29,7 +29,7 @@ const signup = async () => {
     })
     router.push('/')
 
-    window.location.href = '/'
+    window.location.href = '/focusty/'
   } catch (error) {
     let data = error.response.data
     console.log(data)

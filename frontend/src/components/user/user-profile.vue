@@ -73,7 +73,7 @@ const deleteAccount = () => {
         localStorage.clear()
         store.setUser(null)
         router.push('/')
-        window.location.href = '/'
+        window.location.href = '/focusty/'
       })
       .catch((error) => {
         console.error('Error deleting account:', error)

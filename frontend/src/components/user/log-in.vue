@@ -24,7 +24,7 @@ const login = async () => {
     })
     router.push('/')
 
-    window.location.href = '/'
+    window.location.href = '/focusty/'
   } catch (error) {
     let data = error.response.data.message
     errormsg.value = data
