@@ -22,20 +22,22 @@ link: https://trisdeveloper.github.io/focusty/
 
 ### Frontend
 
-- Vue.js
-- Vite
-- Axios
-- Chart.js
-- Pinia
-- Vue Router
-- Sortable.js
+[![Vue.js](https://img.shields.io/badge/Vue.js-3.4.15-brightgreen)](https://vuejs.org/)
+[![Vite](https://img.shields.io/badge/Vite-5.0.11-blueviolet)](https://vitejs.dev/)
+[![Axios](https://img.shields.io/badge/Axios-1.6.7-blue)](https://axios-http.com/)
+[![Chart.js](https://img.shields.io/badge/Chart.js-3.9.1-orange)](https://www.chartjs.org/)
+[![Pinia](https://img.shields.io/badge/Pinia-2.1.7-yellowgreen)](https://pinia.esm.dev/)
+[![Vue Router](https://img.shields.io/badge/Vue%20Router-4.2.5-orange)](https://router.vuejs.org/)
+[![Sortable.js](https://img.shields.io/badge/Sortable.js-1.15.2-yellow)](https://sortablejs.github.io/Vue.Draggable/)
 
 ### Backend
 
-- Django
-- Django Rest Framework
-- django-cors-headers
-- Djoser
+[![Django](https://img.shields.io/badge/Django-3.2-brightgreen)](https://www.djangoproject.com/)
+[![Django CORS Headers](https://img.shields.io/badge/Django%20CORS%20Headers-4.3.1-blueviolet)](https://github.com/adamchainz/django-cors-headers)
+[![Django Rest Framework](https://img.shields.io/badge/Django%20Rest%20Framework-3.14.0-blue)](https://www.django-rest-framework.org/)
+[![Django Rest Framework Simple JWT](https://img.shields.io/badge/Django%20Rest%20Framework%20Simple%20JWT-5.3.1-orange)](https://django-rest-framework-simplejwt.readthedocs.io/en/latest/)
+[![Djoser](https://img.shields.io/badge/Djoser-2.2.2-yellowgreen)](https://djoser.readthedocs.io/en/latest/)
+[![Social Auth App Django](https://img.shields.io/badge/Social%20Auth%20App%20Django-5.4.0-yellow)](https://github.com/python-social-auth/social-app-django)
 
 ## Usage 📝
 
