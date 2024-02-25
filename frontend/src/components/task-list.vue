@@ -21,12 +21,22 @@ const store = useStore()
 const updateTaskDoneStatus = async (task) => {
   try {
     task.done = !task.done
-    await axios.patch(`/api/users/${store.user.id}/tasks/${task.id}/`, { done: task.done })
-    props.fetchData()
+    if (localStorage.getItem('userId')) {
+      await axios.patch(`/api/users/${store.user.id}/tasks/${task.id}/`, { done: task.done })
+    } else {
+      const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
+
+      const updatedTaskIndex = localTasks.findIndex((t) => t.id == Number(task.id))
+      if (updatedTaskIndex !== -1) {
+        localTasks[updatedTaskIndex].done = task.done
+        localStorage.setItem('tasks', JSON.stringify(localTasks))
+      }
+    }
   } catch (error) {
     // Handle errors
     console.error(error)
   }
+  props.fetchData()
 }
 props.fetchData()
 </script>

@@ -9,6 +9,9 @@ const store = useStore()
 const props = defineProps(['filterdays'])
 const today = new Date()
 const tasks = ref([])
+
+let nextTaskId = localStorage.getItem('nextTaskId') || 1
+
 // resposive week view
 const isWideScreen = ref(window.innerWidth >= 1075 || window.innerWidth <= 600)
 
@@ -46,6 +49,7 @@ const displayedDays = computed(() => {
 onMounted(() => {
   createSortableInstances()
   fetchData()
+  moveTasksTodb()
 })
 
 const createSortableInstances = () => {
@@ -69,13 +73,24 @@ const createSortableInstances = () => {
 
 const dropTaskDate = async (task, date) => {
   try {
-    await axios.patch(`/api/users/${store.user.id}/tasks/${task}/`, { date: date })
+    if (localStorage.getItem('userId')) {
+      await axios.patch(`/api/users/${store.user.id}/tasks/${task}/`, { date: date })
+    } else {
+      const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
+
+      const updatedTaskIndex = localTasks.findIndex((t) => t.id == Number(task))
+      if (updatedTaskIndex !== -1) {
+        localTasks[updatedTaskIndex].date = date
+        localStorage.setItem('tasks', JSON.stringify(localTasks))
+      }
+    }
+
     sortTasks()
-    fetchData()
   } catch (error) {
     // Handle errors
     console.error(error)
   }
+  fetchData()
 }
 // date format    - thu feb 8 -
 const formatDatePart = (date, part) => {
@@ -130,7 +145,24 @@ const fetchData = () => {
     tasks.value = localTasks
   }
 }
-
+const moveTasksTodb = async () => {
+  try {
+    const userId = localStorage.getItem('userId')
+    if (userId) {
+      const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
+      if (localTasks.length >= 1) {
+        // Move tasks from local storage to database
+        for (let i = 0; i < localTasks.length; i++) {
+          localTasks[i].user = userId // Assign user ID to each task
+          await axios.post(`/api/users/${userId}/tasks/`, localTasks[i])
+        }
+        localStorage.removeItem('tasks')
+      }
+    }
+  } catch (error) {
+    console.error('Error moving tasks to database:', error)
+  }
+}
 const sortTasks = () => {
   tasks.value.sort((a, b) => {
     // If a task doesn't have a time, it comes first
@@ -187,17 +219,19 @@ const saveTaskAndClose = async () => {
         localStorage.setItem('tasks', JSON.stringify(localTasks))
       } else {
         const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
-        store.selectedTask.id = localTasks.length + 1
+        store.selectedTask.id = String(nextTaskId++)
         localTasks.push(store.selectedTask)
         localStorage.setItem('tasks', JSON.stringify(localTasks))
+        localStorage.setItem('nextTaskId', nextTaskId)
       }
     }
-    fetchData()
+
     closeTaskCard()
   } catch (error) {
     // Handle errors
     console.error(error)
   }
+  fetchData()
 }
 
 const openTaskCard = (event, task, day) => {

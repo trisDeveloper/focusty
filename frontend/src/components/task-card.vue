@@ -69,27 +69,42 @@ import axios from 'axios'
 import { useStore } from '@/stores'
 const props = defineProps(['fetchData', 'task'])
 const store = useStore()
-
+let nextTaskId = localStorage.getItem('nextTaskId') || 1
 const deleteTask = async (task) => {
   try {
-    task.done = !task.done
     closeTaskCard()
-    await axios.delete(`/api/users/${store.user.id}/tasks/${task.id}/`, { done: task.done })
-    props.fetchData()
+    if (localStorage.getItem('userId')) {
+      await axios.delete(`/api/users/${store.user.id}/tasks/${task.id}/`, { done: task.done })
+    } else {
+      const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
+      const updatedTasks = localTasks.filter((t) => t.id !== task.id)
+      localStorage.setItem('tasks', JSON.stringify(updatedTasks))
+    }
   } catch (error) {
     // Handle errors
     console.error(error)
   }
+  props.fetchData()
 }
 const updateTaskDoneStatus = async (task) => {
   try {
     task.done = !task.done
-    await axios.patch(`/api/users/${store.user.id}/tasks/${task.id}/`, { done: task.done })
-    props.fetchData()
+    if (localStorage.getItem('userId')) {
+      await axios.patch(`/api/users/${store.user.id}/tasks/${task.id}/`, { done: task.done })
+    } else {
+      const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
+
+      const updatedTaskIndex = localTasks.findIndex((t) => t.id == Number(task.id))
+      if (updatedTaskIndex !== -1) {
+        localTasks[updatedTaskIndex].done = task.done
+        localStorage.setItem('tasks', JSON.stringify(localTasks))
+      }
+    }
   } catch (error) {
     // Handle errors
     console.error(error)
   }
+  props.fetchData()
 }
 const closeTaskCard = () => {
   store.setIsOpenCard(false)
@@ -144,7 +159,6 @@ const saveTaskAndClose = async () => {
       }
     } else {
       if (store.selectedTask.id) {
-        console.log(store.selectedTask.id)
         const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
         const existingTaskIndex = localTasks.findIndex((task) => task.id === store.selectedTask.id)
         if (existingTaskIndex !== -1) {
@@ -154,17 +168,19 @@ const saveTaskAndClose = async () => {
         localStorage.setItem('tasks', JSON.stringify(localTasks))
       } else {
         const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
-        store.selectedTask.id = localTasks.length + 1
+        store.selectedTask.id = String(nextTaskId++)
         localTasks.push(store.selectedTask)
         localStorage.setItem('tasks', JSON.stringify(localTasks))
+        localStorage.setItem('nextTaskId', nextTaskId)
       }
     }
-    props.fetchData()
+
     closeTaskCard()
   } catch (error) {
     // Handle errors
     console.error(error)
   }
+  props.fetchData()
 }
 props.fetchData()
 </script>
