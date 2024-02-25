@@ -133,13 +133,31 @@ const saveTaskAndClose = async () => {
       closeTaskCard()
       return
     }
-    if (store.selectedTask.id) {
-      await axios.patch(
-        `/api/users/${store.user.id}/tasks/${store.selectedTask.id}/`,
-        store.selectedTask
-      )
+    if (localStorage.getItem('userId')) {
+      if (store.selectedTask.id) {
+        await axios.patch(
+          `/api/users/${store.user.id}/tasks/${store.selectedTask.id}/`,
+          store.selectedTask
+        )
+      } else {
+        await axios.post(`/api/users/${store.user.id}/tasks/`, store.selectedTask)
+      }
     } else {
-      await axios.post(`/api/users/${store.user.id}/tasks/`, store.selectedTask)
+      if (store.selectedTask.id) {
+        console.log(store.selectedTask.id)
+        const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
+        const existingTaskIndex = localTasks.findIndex((task) => task.id === store.selectedTask.id)
+        if (existingTaskIndex !== -1) {
+          // Task found, update its properties
+          localTasks[existingTaskIndex] = store.selectedTask
+        }
+        localStorage.setItem('tasks', JSON.stringify(localTasks))
+      } else {
+        const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
+        store.selectedTask.id = localTasks.length + 1
+        localTasks.push(store.selectedTask)
+        localStorage.setItem('tasks', JSON.stringify(localTasks))
+      }
     }
     props.fetchData()
     closeTaskCard()
