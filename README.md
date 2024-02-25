@@ -83,9 +83,3 @@ Contributions are invaluable to the continued evolution of Focusty. Whether you 
 ## License 📄
 
 This project is licensed under the MIT License.
-
-## Certefication 
-
-this project is submitted as final project for **CS50x Introduction to Computer Science 2024 Harvard**
-
-![CS50x Harvard](https://certificates.cs50.io/782ab1b8-a6d0-4224-8784-d261fdb81c00.png?size=letter)
