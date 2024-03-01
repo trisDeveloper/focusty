@@ -1,3 +1,4 @@
+#views.py
 from rest_framework import generics
 from .models import User, Task, Pomodoro
 from .serializers import TaskSerializer, UserSerializer, PomodoroSerializer
@@ -9,7 +10,7 @@ import json
 from django.db.models import Count
 from django.db.models import Sum
 class UserList(generics.ListCreateAPIView):
-    queryset = User.objects.all()
+    queryset = User.objects.filter(is_staff=False) 
     serializer_class = UserSerializer
 
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):

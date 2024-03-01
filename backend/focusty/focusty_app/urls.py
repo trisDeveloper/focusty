@@ -1,3 +1,4 @@
+# urls.py
 from django.urls import path
 from .views import UserList, UserDetail, TaskListCreate, TaskDetail, login_view, PomodoroListCreate, PomodoroDetail, tasks_count
 
