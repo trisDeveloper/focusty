@@ -1,6 +1,7 @@
 # Focusty 🚀
 
-> **⚠️ Warning:** This application is currently under active development and may not be secure for handling sensitive information. Please refrain from using sensitive data until further notice.
+> [!WARNING]
+> This application is currently under active development and may not be secure for handling sensitive information. Please refrain from using sensitive data until further notice.
 
 Focusty is a full-stack productivity application meticulously crafted with Vue, Vite, Python and Django. It seamlessly integrates Pomodoro focus techniques, advanced task management, and insightful analytics for individuals striving for peak productivity.
 
