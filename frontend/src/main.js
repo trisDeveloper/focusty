@@ -23,7 +23,8 @@ import {
   faHourglass,
   faListCheck,
   faPause,
-  faPencil
+  faPencil,
+  faRepeat
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
@@ -46,7 +47,8 @@ library.add(
   faClock,
   faGear,
   faPause,
-  faForwardStep
+  faForwardStep,
+  faRepeat
 )
 
 const app = createApp(App)

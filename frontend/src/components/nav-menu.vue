@@ -130,7 +130,7 @@ onUnmounted(() => {
   a {
     text-decoration: none;
     position: relative;
-    color: #06061c;
+    color: #0b0c0d;
     width: 100%;
     height: 100%;
     font-weight: bold;
@@ -181,40 +181,28 @@ onUnmounted(() => {
         color: #ddd;
       }
       &:hover {
-        background-color: #30305680;
+        background-color: #25252580;
         box-sizing: content-box;
-        border-width: 0 0 0 2px;
+        border-width: 0 0 0 1px;
         border-style: solid;
         border-image: $border-gradient;
         border-image-slice: 1;
-        &:nth-child(1) svg {
-          color: #97a7ff;
-        }
-        &:nth-child(2) svg {
-          color: #a984ff;
-        }
-        &:nth-child(3) svg {
-          color: #ff86e1;
-        }
-        &:nth-child(4) svg {
-          color: #ffdc86;
-        }
-        &:nth-child(5) svg {
-          color: #9eff86;
+         svg {
+          color: #dadada;
         }
       }
     }
   }
 }
 .signup-btn {
-  color: wheat;
+  color: #fcfcfc;
   text-decoration: none;
   padding: 7px 10px;
-  border: 1px solid wheat;
+  border: 1px solid #e2e2e2;
   border-radius: 7px;
   margin-right: 10px;
   &:hover {
-    background: rgba(245, 222, 179, 0.15);
+    background: rgba(219, 219, 219, 0.15);
   }
   &:active {
     border: none;

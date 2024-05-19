@@ -56,9 +56,9 @@ props.fetchData()
     box-sizing: border-box;
     $border: 1px;
     color: #fff;
-    background: $dark-back;
+    background: linear-gradient(165deg, #49494973, #181818);
     background-clip: padding-box;
-    border: solid $border transparent;
+    border: solid $border #333;
     border-radius: 7px;
     .checkbox {
       padding: 0 10px 0 0;
@@ -67,7 +67,7 @@ props.fetchData()
       overflow: hidden;
     }
     &:hover {
-      background-color: #121231;
+      background-color: #131518;
       cursor: pointer;
     }
     &:before {
@@ -99,7 +99,7 @@ props.fetchData()
     transform: translate(-50%, -50%);
     border-radius: 10px;
     padding: 20px;
-    background-color: #06061c;
+    background-color: #0b0c0d;
     border: 1px solid #8269ac;
     box-shadow: 0px 2px 10px 2px #03030e41;
     z-index: 10;
@@ -121,7 +121,7 @@ props.fetchData()
     .task-desc,
     .task-date {
       border: none;
-      background: #06061c;
+      background: #0b0c0d;
       color: white;
       margin: 10px 0;
       width: 100%;
@@ -138,7 +138,7 @@ props.fetchData()
       display: flex;
       align-items: center;
       & input:hover {
-        background-color: #121231;
+        background-color: #131518;
       }
       input {
         border-bottom: 1px solid #ddd;
@@ -158,13 +158,13 @@ props.fetchData()
       align-items: center;
       .date-picker {
         border: 1px solid #a984ff;
-        background: #121231 !important;
+        background: #131518 !important;
         position: absolute;
         button {
-          background: #06061c !important;
+          background: #0b0c0d !important;
         }
         .vc-arrow {
-          background: #121231;
+          background: #131518;
         }
       }
       .vc-popover-content-wrapper .vc-popover-content button {
@@ -176,14 +176,14 @@ props.fetchData()
         border: none;
         color: inherit;
         font-size: inherit;
-        border: 1px solid #121231;
+        border: 1px solid #131518;
         cursor: pointer;
         padding: 9px 5px;
         margin-right: 6px;
         border-radius: 4px;
         transition: all 0.3s ease-in-out;
         &:hover {
-          background: #06061c;
+          background: #0b0c0d;
           border: 1px solid #aaaeb7;
         }
         svg {
@@ -198,9 +198,9 @@ props.fetchData()
         width: 120px;
         .dp__pointer {
           background: inherit !important;
-          border: 1px solid #121231;
+          border: 1px solid #131518;
           &:hover {
-            background: #06061c;
+            background: #0b0c0d;
             border: 1px solid #aaaeb7;
           }
         }
@@ -210,7 +210,7 @@ props.fetchData()
       font-size: 15px;
       color: #ffffffc4;
       &:hover {
-        background-color: #121231;
+        background-color: #131518;
       }
     }
   }

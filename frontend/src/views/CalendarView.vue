@@ -109,19 +109,6 @@ const getTasksForDate = (date) => {
     .sort((a, b) => (a.done === b.done ? 0 : a.done ? 1 : -1))
 }
 
-// set colors per day
-const getDayColor = (weekday) => {
-  const colors = {
-    Sun: '#ff8d84',
-    Mon: '#ff9dd7',
-    Tue: '#29ff7c',
-    Wed: '#c4a3ff',
-    Thu: '#8dc4ff',
-    Fri: '#ffcf3f',
-    Sat: '#ffff69'
-  }
-  return colors[weekday] || '#ddd'
-}
 
 const handleResize = () => {
   isWideScreen.value = window.innerWidth >= 1075 || window.innerWidth <= 600
@@ -287,7 +274,7 @@ fetchData()
     <div class="calendar">
       <div v-for="(day, index) in displayedDays" :key="index" class="day">
         <div class="dayname">
-          <div class="weekday" :style="{ color: getDayColor(day.weekday) }">
+          <div class="weekday" :style="{ color: 'white' }">
             {{ day.weekday }}
           </div>
           <div class="daynum">{{ day.month }} {{ day.day }}</div>

@@ -229,7 +229,7 @@ const deleteImage = async () => {
     .image {
       height: 150px;
       position: relative;
-      color: #06061c;
+      color: #0b0c0d;
       background: #fff897;
       width: 150px;
       border-radius: 8%;

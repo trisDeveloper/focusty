@@ -217,6 +217,7 @@ onUnmounted(() => {
     right: 15px;
     font-size: 23px;
     color: #ffffffc9;
+    cursor: pointer;
     &:hover {
       color: white;
     }
@@ -233,13 +234,13 @@ onUnmounted(() => {
   transform: translate(-50%, -50%);
   border-radius: 10px;
   padding: 20px;
-  background-color: #06061c;
+  background-color: #0b0c0d;
   border: 1px solid #8269ac;
   box-shadow: 0px 2px 10px 2px #03030e41;
   z-index: 10;
   input {
     border-radius: 4px;
-    background-color: #121231;
+    background-color: #131518;
     color: white;
     width: 100%;
     padding: 5px;
@@ -278,7 +279,7 @@ onUnmounted(() => {
 .timer {
   text-align: center;
   padding: 15px 0;
-  background: #5a5a8514;
+  background: #16181a82;
   border-radius: 8px;
   .sessions {
     display: flex;
@@ -297,7 +298,7 @@ onUnmounted(() => {
       padding: 5px 7px;
       white-space: nowrap;
       &:hover {
-        background: #06061c;
+        background: #0b0c0d;
       }
     }
     .active {

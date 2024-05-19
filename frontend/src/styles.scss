@@ -1,17 +1,6 @@
-$dark-back: #06061b;
-$border-gradient: linear-gradient(to right bottom, #7a55ff, #ff4caa, #ffdc86);
-$rainbow-gradient:
-  radial-gradient(circle at 100% 100%, #06061b 0, #06061b 6px, transparent 6px) 0% 0%/8px 8px
-    no-repeat,
-  radial-gradient(circle at 0 100%, #06061b 0, #06061b 6px, transparent 6px) 100% 0%/8px 8px
-    no-repeat,
-  radial-gradient(circle at 100% 0, #06061b 0, #06061b 6px, transparent 6px) 0% 100%/8px 8px
-    no-repeat,
-  radial-gradient(circle at 0 0, #06061b 0, #06061b 6px, transparent 6px) 100% 100%/8px 8px
-    no-repeat,
-  linear-gradient(#06061b, #06061b) 50% 50% / calc(100% - 10px) calc(100% - 4px) no-repeat,
-  linear-gradient(#06061b, #06061b) 50% 50% / calc(100% - 4px) calc(100% - 10px) no-repeat,
-  linear-gradient(40deg, #6f5faada 10%, #ff55dab0 43%, #ff65a5a8 87%, #fff67aad 100%);
+$dark-back: #0b0c0d;
+$border-gradient: 'white';
+$rainbow-gradient: 'white';
 
 *,
 *::before,
@@ -33,7 +22,7 @@ body {
   color: #fff;
 }
 .dp__theme_dark {
-  --dp-background-color: #06061c !important;
+  --dp-background-color: #0b0c0d !important;
   --dp-text-color: #fff;
   --dp-hover-color: #484848;
   --dp-hover-text-color: #fff;
@@ -43,11 +32,11 @@ body {
   --dp-primary-text-color: #fff;
   --dp-secondary-color: #a9a9a9;
   --dp-border-color: #111133 !important;
-  --dp-menu-border-color: #121231 !important;
+  --dp-menu-border-color: #131518 !important;
   --dp-border-color-hover: #aaaeb7;
   --dp-disabled-color: #737373;
   --dp-disabled-color-text: #d0d0d0;
-  --dp-scroll-bar-background: #06061c !important;
+  --dp-scroll-bar-background: #0b0c0d !important;
   --dp-scroll-bar-color: #484848;
   --dp-success-color: #00701a;
   --dp-success-color-disabled: #428f59;

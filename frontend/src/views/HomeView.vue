@@ -17,12 +17,6 @@ watch(
 
 <template>
   <div class="home">
-    <p
-      v-if="!store.user.id"
-      style="color: red; padding: 10px 7px; border: 1px solid red; text-align: center; margin: 10px"
-    >
-      you should log in to use the app
-    </p>
     <h1>{{ msg }}</h1>
     <main>
       <div class="today-tasks">
