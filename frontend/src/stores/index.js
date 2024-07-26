@@ -12,12 +12,15 @@ export const useStore = defineStore('storeId', {
       join: null
     },
     isopencard: false,
+    isRepeatOpen: false,
     selectedTask: {
       id: null,
       title: '',
       date: null,
       time: '00:00',
       description: '',
+      repeatParameters: null,
+      repeatId: null, 
       done: false,
       user: null
     },
@@ -29,6 +32,9 @@ export const useStore = defineStore('storeId', {
   actions: {
     setIsOpenCard(value) {
       this.isopencard = value
+    },
+    setIsRepeatOpen(value) {
+      this.isRepeatOpen = value
     },
     setSelectedTask(task) {
       this.selectedTask = task

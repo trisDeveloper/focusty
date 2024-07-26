@@ -64,6 +64,7 @@ const today = new Date().toLocaleDateString('en-US', {
 
 const toggleSidebar = (event) => {
   event.stopPropagation()
+  store.setIsOpenCard(false)
   isSidebarActive.value = !isSidebarActive.value
   if (isSidebarActive.value) {
     window.addEventListener('click', closeSidebar)
@@ -187,7 +188,7 @@ onUnmounted(() => {
         border-style: solid;
         border-image: $border-gradient;
         border-image-slice: 1;
-         svg {
+        svg {
           color: #dadada;
         }
       }

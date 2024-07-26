@@ -1,22 +1,164 @@
+<script setup>
+import axios from 'axios'
+import taskRepeat from './task-repeat.vue'
+import { useStore } from '@/stores'
+const props = defineProps(['fetchData', 'task'])
+const store = useStore()
+let nextTaskId = localStorage.getItem('nextTaskId') || 1
+const deleteTask = async (task) => {
+  try {
+    closeTaskCard()
+    if (localStorage.getItem('userId')) {
+      await axios.delete(`/api/users/${store.user.id}/tasks/${task.id}/`, { done: task.done })
+    } else {
+      const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
+      const updatedTasks = localTasks.filter((t) => t.id !== task.id)
+      localStorage.setItem('tasks', JSON.stringify(updatedTasks))
+    }
+  } catch (error) {
+    // Handle errors
+    console.error(error)
+  }
+  props.fetchData()
+}
+const handleClickOutside = (event) => {
+  if (store.isRepeatOpen && !event.target.closest('.task-repeat')) {
+    store.setIsRepeatOpen(false)
+    document.removeEventListener('click', handleClickOutside)
+  }
+}
+const openRepeatCard = () => {
+  setTimeout(() => {
+    store.setIsRepeatOpen(true)
+  }, 0)
+  document.addEventListener('click', handleClickOutside)
+}
+
+const updateTaskDoneStatus = async (task) => {
+  try {
+    task.done = !task.done
+    if (localStorage.getItem('userId')) {
+      await axios.patch(`/api/users/${store.user.id}/tasks/${task.id}/`, { done: task.done })
+    } else {
+      const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
+
+      const updatedTaskIndex = localTasks.findIndex((t) => t.id == Number(task.id))
+      if (updatedTaskIndex !== -1) {
+        localTasks[updatedTaskIndex].done = task.done
+        localStorage.setItem('tasks', JSON.stringify(localTasks))
+      }
+    }
+  } catch (error) {
+    // Handle errors
+    console.error(error)
+  }
+  props.fetchData()
+}
+const closeTaskCard = () => {
+  store.setIsOpenCard(false)
+
+  store.setSelectedTask({
+    id: null,
+    title: '',
+    date: null,
+    time: null,
+    repeatParameters: null,
+    repeatId: null,
+    description: '',
+    done: false
+  })
+  store.timepic = {
+    hours: 0,
+    minutes: 0
+  }
+  document.body.removeEventListener('click', closeTaskCard)
+}
+
+const updateTaskTitle = (event) => {
+  store.selectedTask.title = event.target.value
+}
+
+const handleDateSelection = (selectedDate) => {
+  store.selectedTask.date = selectedDate.toISOString().split('T')[0]
+}
+
+const handleTimeSelection = (modelData) => {
+  store.timepic = modelData
+  store.selectedTask.time = `${store.timepic.hours}:${store.timepic.minutes}`
+}
+
+const updateTaskDescription = (event) => {
+  store.selectedTask.description = event.target.value
+}
+
+const saveTaskAndClose = async () => {
+  try {
+    console.log(store.selectedTask)
+    if (store.selectedTask.title.trim() === '') {
+      // If title is empty, do nothing
+      closeTaskCard()
+      return
+    }
+    if (localStorage.getItem('userId')) {
+      if (store.selectedTask.id) {
+        await axios.patch(
+          `/api/users/${store.user.id}/tasks/${store.selectedTask.id}/`,
+          store.selectedTask
+        )
+      } else {
+        await axios.post(`/api/users/${store.user.id}/tasks/`, store.selectedTask)
+      }
+    } else {
+      if (store.selectedTask.id) {
+        const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
+        const existingTaskIndex = localTasks.findIndex((task) => task.id === store.selectedTask.id)
+        if (existingTaskIndex !== -1) {
+          // Task found, update its properties
+          localTasks[existingTaskIndex] = store.selectedTask
+        }
+        localStorage.setItem('tasks', JSON.stringify(localTasks))
+      } else {
+        const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
+        store.selectedTask.id = String(nextTaskId++)
+        localTasks.push(store.selectedTask)
+        localStorage.setItem('tasks', JSON.stringify(localTasks))
+        localStorage.setItem('nextTaskId', nextTaskId)
+      }
+    }
+    closeTaskCard()
+  } catch (error) {
+    // Handle errors
+    console.error(error)
+  }
+  props.fetchData()
+}
+props.fetchData()
+</script>
+
 <template>
   <div v-if="store.isopencard" class="task-card" ref="taskCard">
     <div class="task-actions">
       <!-- delete icon -->
       <font-awesome-icon
+        title="Delete Task"
         icon="fa-regular fa-trash-can"
         class="trash"
         @click="deleteTask(store.selectedTask)"
       />
+      <!-- done icon -->
       <font-awesome-icon
+        title="Mark As Done"
         icon="fa-regular fa-check-square"
         class="checkbox"
         @click="updateTaskDoneStatus(store.selectedTask)"
         :class="{ done: store.selectedTask.done }"
       />
+      <!-- repeat icon -->
       <font-awesome-icon
+        title="Repeat Task"
         icon="fa-solid fa-repeat"
         class="repeat"
-        @click="openRepeatCard(store.selectedTask)"
+        @click="openRepeatCard()"
       />
     </div>
     <!-- title -->
@@ -66,129 +208,11 @@
       @keyup.enter="saveTaskAndClose"
       placeholder="Description"
     />
+
+    <taskRepeat v-if="store.isRepeatOpen"></taskRepeat>
   </div>
 </template>
 
-<script setup>
-import axios from 'axios'
-import { useStore } from '@/stores'
-const props = defineProps(['fetchData', 'task'])
-const store = useStore()
-let nextTaskId = localStorage.getItem('nextTaskId') || 1
-const deleteTask = async (task) => {
-  try {
-    closeTaskCard()
-    if (localStorage.getItem('userId')) {
-      await axios.delete(`/api/users/${store.user.id}/tasks/${task.id}/`, { done: task.done })
-    } else {
-      const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
-      const updatedTasks = localTasks.filter((t) => t.id !== task.id)
-      localStorage.setItem('tasks', JSON.stringify(updatedTasks))
-    }
-  } catch (error) {
-    // Handle errors
-    console.error(error)
-  }
-  props.fetchData()
-}
-const updateTaskDoneStatus = async (task) => {
-  try {
-    task.done = !task.done
-    if (localStorage.getItem('userId')) {
-      await axios.patch(`/api/users/${store.user.id}/tasks/${task.id}/`, { done: task.done })
-    } else {
-      const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
-
-      const updatedTaskIndex = localTasks.findIndex((t) => t.id == Number(task.id))
-      if (updatedTaskIndex !== -1) {
-        localTasks[updatedTaskIndex].done = task.done
-        localStorage.setItem('tasks', JSON.stringify(localTasks))
-      }
-    }
-  } catch (error) {
-    // Handle errors
-    console.error(error)
-  }
-  props.fetchData()
-}
-const closeTaskCard = () => {
-  store.setIsOpenCard(false)
-
-  store.setSelectedTask({
-    id: null,
-    title: '',
-    date: null,
-    time: null,
-    description: '',
-    done: false
-  })
-  store.timepic = {
-    hours: 0,
-    minutes: 0
-  }
-  document.body.removeEventListener('click', closeTaskCard)
-}
-
-const updateTaskTitle = (event) => {
-  store.selectedTask.title = event.target.value
-}
-
-const handleDateSelection = (selectedDate) => {
-  store.selectedTask.date = selectedDate.toISOString().split('T')[0]
-}
-
-const handleTimeSelection = (modelData) => {
-  store.timepic = modelData
-  store.selectedTask.time = `${store.timepic.hours}:${store.timepic.minutes}`
-}
-
-const updateTaskDescription = (event) => {
-  store.selectedTask.description = event.target.value
-}
-
-const saveTaskAndClose = async () => {
-  try {
-    if (store.selectedTask.title.trim() === '') {
-      // If title is empty, do nothing
-      closeTaskCard()
-      return
-    }
-    if (localStorage.getItem('userId')) {
-      if (store.selectedTask.id) {
-        await axios.patch(
-          `/api/users/${store.user.id}/tasks/${store.selectedTask.id}/`,
-          store.selectedTask
-        )
-      } else {
-        await axios.post(`/api/users/${store.user.id}/tasks/`, store.selectedTask)
-      }
-    } else {
-      if (store.selectedTask.id) {
-        const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
-        const existingTaskIndex = localTasks.findIndex((task) => task.id === store.selectedTask.id)
-        if (existingTaskIndex !== -1) {
-          // Task found, update its properties
-          localTasks[existingTaskIndex] = store.selectedTask
-        }
-        localStorage.setItem('tasks', JSON.stringify(localTasks))
-      } else {
-        const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
-        store.selectedTask.id = String(nextTaskId++)
-        localTasks.push(store.selectedTask)
-        localStorage.setItem('tasks', JSON.stringify(localTasks))
-        localStorage.setItem('nextTaskId', nextTaskId)
-      }
-    }
-
-    closeTaskCard()
-  } catch (error) {
-    // Handle errors
-    console.error(error)
-  }
-  props.fetchData()
-}
-props.fetchData()
-</script>
 <style lang="scss">
 @import './../styles.scss';
 .tasks {

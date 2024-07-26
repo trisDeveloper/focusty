@@ -109,7 +109,6 @@ const getTasksForDate = (date) => {
     .sort((a, b) => (a.done === b.done ? 0 : a.done ? 1 : -1))
 }
 
-
 const handleResize = () => {
   isWideScreen.value = window.innerWidth >= 1075 || window.innerWidth <= 600
 }
@@ -169,6 +168,8 @@ const closeTaskCard = () => {
     title: '',
     date: null,
     time: null,
+    repeatParameters: null,
+    repeatId: null,
     description: '',
     done: false
   })
@@ -176,7 +177,7 @@ const closeTaskCard = () => {
     hours: 0,
     minutes: 0
   }
-  window.removeEventListener('click', closeTaskCard)
+  document.removeEventListener('click', openTaskCard)
 }
 
 const saveTaskAndClose = async () => {
@@ -222,8 +223,13 @@ const saveTaskAndClose = async () => {
 }
 
 const openTaskCard = (event, task, day) => {
-  if (event.target.closest('.task-card')) {
+  if (
+    event.target.closest('.task-card') ||
+    event.target.closest('.task-repeat') ||
+    store.isRepeatOpen
+  ) {
     // Clicked inside the task card, don't trigger opening or closing
+
     return
   }
   if (event.target.classList.contains('checkbox')) {
@@ -232,21 +238,30 @@ const openTaskCard = (event, task, day) => {
   if (!task && !store.isopencard) {
     // create new task
 
-    store.setSelectedTask({
-      id: null,
-      title: '',
-      date: day.date,
-      time: null,
-      description: '',
-      done: false,
-      user: localStorage.getItem('userId') || null
-    })
-    store.setIsOpenCard(true)
+    setTimeout(() => {
+      store.setIsOpenCard(true)
+      store.setSelectedTask({
+        id: null,
+        title: '',
+        date: day.date,
+        time: null,
+        description: '',
+        repeatParameters: null,
+        repeatId: null,
+        done: false,
+        user: localStorage.getItem('userId') || null
+      })
+    }, 0)
+
+    document.addEventListener('click', openTaskCard)
   } else if (!task && store.isopencard) {
     saveTaskAndClose()
   } else if (task && !store.isopencard) {
     //update existing task
-    store.setIsOpenCard(true)
+
+    setTimeout(() => {
+      store.setIsOpenCard(true)
+    }, 0)
     store.setSelectedTask({ ...task })
     if (store.selectedTask.time) {
       store.timepic = {
@@ -254,16 +269,12 @@ const openTaskCard = (event, task, day) => {
         minutes: store.selectedTask.time.split(':')[1]
       }
     }
+
+    document.addEventListener('click', openTaskCard)
   } else {
     saveTaskAndClose()
   }
-  if (!store.isopencard) {
-    window.addEventListener('click', closeTaskCard)
-  } else {
-    window.removeEventListener('click', closeTaskCard)
-  }
 }
-
 window.addEventListener('resize', handleResize)
 handleResize()
 fetchData()
