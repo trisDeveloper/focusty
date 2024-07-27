@@ -2,16 +2,21 @@
 import { ref } from 'vue'
 import { useStore } from '@/stores'
 const store = useStore()
-
-const everyNumber = ref(1)
-const everyUnit = ref('days')
-const selectedDays = ref([])
-const repeatEnd = ref('never')
-const occurrences = ref(30)
+const weekDays = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
+const everyNumber = ref(store.selectedTask.repeatParameters?.everyNumber ?? 1)
+const everyUnit = ref(store.selectedTask.repeatParameters?.everyUnit ?? 'days')
+const selectedDays = ref(
+  store.selectedTask.repeatParameters?.selectedDays ?? [
+    weekDays.indexOf(`${new Date(store.selectedTask.date)}`.slice(0, 2))
+  ]
+)
+const repeatEnd = ref(store.selectedTask.repeatParameters?.repeatEnd ?? 'never')
+const occurrences = ref(store.selectedTask.repeatParameters?.occurrences ?? 30)
 const endDate = ref(
-  new Date(new Date(store.selectedTask.date).setMonth(new Date().getMonth() + 1))
-    .toISOString()
-    .split('T')[0]
+  store.selectedTask.repeatParameters?.endDate ??
+    new Date(new Date(store.selectedTask.date).setMonth(new Date().getMonth() + 1))
+      .toISOString()
+      .split('T')[0]
 )
 const repeatNot = ref(false)
 
@@ -24,14 +29,16 @@ const validateInput = () => {
   }
 }
 
-const weekDays = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
-
 const toggleDay = (day) => {
   const index = selectedDays.value.indexOf(day)
   if (index === -1) {
     selectedDays.value.push(day)
   } else {
     selectedDays.value.splice(index, 1)
+  }
+
+  if (selectedDays.value.length === 0) {
+    selectedDays.value.push(weekDays.indexOf(`${new Date(store.selectedTask.date)}`.slice(0, 2)))
   }
 }
 
@@ -47,12 +54,21 @@ const save = () => {
         repeatParameters: {
           everyNumber: everyNumber.value,
           everyUnit: everyUnit.value,
-          selectedDays: everyUnit.value == 'weeks' ? selectedDays.value : [],
+          selectedDays:
+            everyUnit.value == 'weeks'
+              ? selectedDays.value
+              : [weekDays.indexOf(`${new Date(store.selectedTask.date)}`.slice(0, 2))],
           repeatEnd: repeatEnd.value,
           occurrences: repeatEnd.value == 'after' ? occurrences.value : null,
           endDate: repeatEnd.value == 'on' ? endDate.value : null
         },
         repeatId: store.selectedTask.id
+      })
+    } else {
+      store.setSelectedTask({
+        ...store.selectedTask,
+        repeatParameters: null,
+        repeatId: null
       })
     }
   } catch (error) {
@@ -92,8 +108,8 @@ const cancel = () => {
         <button
           v-for="(day, index) in weekDays"
           :key="index"
-          :class="{ active: selectedDays.includes(day) }"
-          @click="toggleDay(day)"
+          :class="{ active: selectedDays.includes(index) }"
+          @click="toggleDay(index)"
           class="week-days"
         >
           {{ day }}

@@ -180,7 +180,52 @@ const closeTaskCard = () => {
   document.removeEventListener('click', openTaskCard)
 }
 
-const saveTaskAndClose = async () => {
+const repeatTask = (prams) => {
+  let dates = []
+  if (prams) {
+    let startDate = new Date(store.selectedTask.date)
+    const repeatUnits = (prams) => {
+      const tempDate = new Date(startDate)
+      if (prams.everyUnit == 'days') {
+        //TO DO: add tasks on those dates
+        dates.push(tempDate)
+        startDate.setDate(startDate.getDate() + prams.everyNumber)
+      } else if (prams.everyUnit === 'weeks') {
+        prams.selectedDays.forEach((day) => {
+          const daysToAdd = (day - tempDate.getDay() + 7) % 7
+          tempDate.setDate(tempDate.getDate() + daysToAdd)
+          // add tasks
+          dates.push(tempDate)
+        })
+        startDate.setDate(startDate.getDate() + 7 * prams.everyNumber)
+      } else if (prams.everyUnit == 'months') {
+        //TO DO: add tasks on those dates
+        dates.push(tempDate)
+        startDate.setMonth(startDate.getMonth() + prams.everyNumber)
+      } else if (prams.everyUnit == 'years') {
+        //TO DO: add tasks on those dates
+        dates.push(tempDate)
+        startDate.setFullYear(startDate.getFullYear() + prams.everyNumber)
+      }
+    }
+    if (prams.repeatEnd == 'after') {
+      for (let i = 0; i < prams.occurrences; i++) {
+        repeatUnits(prams)
+      }
+    } else if (prams.repeatEnd == 'on') {
+      while (startDate <= new Date(prams.endDate)) {
+        repeatUnits(prams)
+      }
+    } else if (prams.repeatEnd == 'never') {
+      for (let i = 0; i < 730; i++) {
+        repeatUnits(prams)
+      }
+    }
+  }
+  return dates
+}
+
+const saveTask = async () => {
   try {
     if (store.selectedTask.title.trim() === '') {
       // If title is empty, do nothing
@@ -207,13 +252,30 @@ const saveTaskAndClose = async () => {
         localStorage.setItem('tasks', JSON.stringify(localTasks))
       } else {
         const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
-        store.selectedTask.id = String(nextTaskId++)
-        localTasks.push(store.selectedTask)
-        localStorage.setItem('tasks', JSON.stringify(localTasks))
-        localStorage.setItem('nextTaskId', nextTaskId)
+        // repeat new task
+        if (store.selectedTask.repeatParameters) {
+          let dates = repeatTask(store.selectedTask.repeatParameters)
+          store.selectedTask.repeatId = String(nextTaskId++)
+          for (let i = 0; i < dates.length; i++) {
+            // Create a new task object for each iteration
+            let newTask = {
+              ...store.selectedTask,
+              id: String(nextTaskId + i),
+              date: new Date(dates[i]).toISOString().split('T')[0]
+            }
+            console.log(newTask)
+            localTasks.push(newTask)
+          }
+          localStorage.setItem('tasks', JSON.stringify(localTasks))
+          localStorage.setItem('nextTaskId', nextTaskId + dates.length)
+        } else {
+          store.selectedTask.id = String(nextTaskId++)
+          localTasks.push(store.selectedTask)
+          localStorage.setItem('tasks', JSON.stringify(localTasks))
+          localStorage.setItem('nextTaskId', nextTaskId)
+        }
       }
     }
-
     closeTaskCard()
   } catch (error) {
     // Handle errors
@@ -255,7 +317,7 @@ const openTaskCard = (event, task, day) => {
 
     document.addEventListener('click', openTaskCard)
   } else if (!task && store.isopencard) {
-    saveTaskAndClose()
+    saveTask()
   } else if (task && !store.isopencard) {
     //update existing task
 
@@ -272,7 +334,7 @@ const openTaskCard = (event, task, day) => {
 
     document.addEventListener('click', openTaskCard)
   } else {
-    saveTaskAndClose()
+    saveTask()
   }
 }
 window.addEventListener('resize', handleResize)
@@ -300,9 +362,9 @@ fetchData()
             @click.stop="openTaskCard($event, task, day)"
           >
           </tasklist>
-          <taskCard :fetchData="fetchData" />
         </div>
       </div>
+      <taskCard :fetchData="fetchData" :saveTask="saveTask" />
     </div>
   </div>
 </template>
