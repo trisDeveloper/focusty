@@ -62,13 +62,12 @@ const save = () => {
           occurrences: repeatEnd.value == 'after' ? occurrences.value : null,
           endDate: repeatEnd.value == 'on' ? endDate.value : null
         },
-        repeatId: store.selectedTask.id
+        repeatId: store.selectedTask.repeatId ?? store.selectedTask.id
       })
     } else {
       store.setSelectedTask({
         ...store.selectedTask,
-        repeatParameters: null,
-        repeatId: null
+        repeatParameters: null
       })
     }
   } catch (error) {

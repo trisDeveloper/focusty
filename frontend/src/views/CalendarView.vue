@@ -9,6 +9,8 @@ const store = useStore()
 const props = defineProps(['filterdays'])
 const today = new Date()
 const tasks = ref([])
+const saveThisOrAll = ref(false)
+const deleteThisOrAll = ref(false)
 
 let nextTaskId = localStorage.getItem('nextTaskId') || 1
 
@@ -180,10 +182,53 @@ const closeTaskCard = () => {
   document.removeEventListener('click', openTaskCard)
 }
 
-const repeatTask = (prams) => {
+const openThisOrAll = (action) => {
+  if (action == 'delete') {
+    setTimeout(() => {
+      deleteThisOrAll.value = true
+    }, 0)
+  } else if (action == 'save') {
+    setTimeout(() => {
+      saveThisOrAll.value = true
+    }, 0)
+  }
+  document.addEventListener('click', closeThisOrAll)
+}
+const closeThisOrAll = (event) => {
+  if (deleteThisOrAll.value && !event?.target.closest('.thisOrAll')) {
+    setTimeout(() => {
+      deleteThisOrAll.value = false
+    }, 0)
+    document.removeEventListener('click', closeThisOrAll)
+  } else if (saveThisOrAll.value && !event?.target.closest('.thisOrAll')) {
+    setTimeout(() => {
+      saveThisOrAll.value = false
+    }, 0)
+    document.removeEventListener('click', closeThisOrAll)
+  }
+}
+
+const handleSaveThisOrAll = () => {
+  const tasksWithSameRepeatId = tasks.value.filter(
+    (t) => t.repeatId === store.selectedTask.repeatId
+  )
+  if (
+    tasksWithSameRepeatId.length > 1 &&
+    store.selectedTask.repeatId &&
+    store.selectedTask.repeatParameters &&
+    JSON.stringify(tasks.value.find((task) => task.id == store.selectedTask.id)) !==
+      JSON.stringify(store.selectedTask)
+  ) {
+    openThisOrAll('save')
+  } else {
+    saveTask()
+  }
+}
+
+const repeatTask = (prams, start) => {
   let dates = []
   if (prams) {
-    let startDate = new Date(store.selectedTask.date)
+    let startDate = new Date(start)
     const repeatUnits = (prams) => {
       const tempDate = new Date(startDate)
       if (prams.everyUnit == 'days') {
@@ -225,7 +270,7 @@ const repeatTask = (prams) => {
   return dates
 }
 
-const saveTask = async () => {
+const saveTask = async (thisOrAll = 'this') => {
   try {
     if (store.selectedTask.title.trim() === '') {
       // If title is empty, do nothing
@@ -244,30 +289,121 @@ const saveTask = async () => {
     } else {
       if (store.selectedTask.id) {
         const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
-        const existingTaskIndex = localTasks.findIndex((task) => task.id === store.selectedTask.id)
-        if (existingTaskIndex !== -1) {
-          // Task found, update its properties
-          localTasks[existingTaskIndex] = store.selectedTask
+        // repeat update all
+        if (store.selectedTask.repeatId) {
+          // Check if repeatParameters have changed
+          if (store.selectedTask.repeatParameters == null) {
+            // Don't repeat Task
+            const updatedTasks = localTasks.filter(
+              (task) =>
+                task.repeatId !== store.selectedTask.repeatId || task.id === store.selectedTask.id
+            )
+            store.selectedTask.repeatId = null
+            const index = updatedTasks.findIndex((task) => task.id === store.selectedTask.id)
+            if (index !== -1) {
+              localTasks[index] = store.selectedTask
+            }
+            localStorage.setItem('tasks', JSON.stringify(updatedTasks))
+          } else {
+            if (thisOrAll == 'all') {
+              let index = localTasks.findIndex((t) => t.repeatId === store.selectedTask.repeatId)
+              if (
+                JSON.stringify(store.selectedTask.repeatParameters) !==
+                JSON.stringify(localTasks[index].repeatParameters)
+              ) {
+                const updatedTasks = localTasks.filter(
+                  (t) => t.repeatId !== String(Number(store.selectedTask.repeatId))
+                )
+                let dates = repeatTask(store.selectedTask.repeatParameters, localTasks[index].date)
+                store.selectedTask.repeatId = String(nextTaskId)
+                for (let i = 0; i < dates.length; i++) {
+                  // Create a new task object for each iteration
+                  let newTask = {
+                    ...store.selectedTask,
+                    id: String(nextTaskId),
+                    date: new Date(dates[i]).toISOString().split('T')[0]
+                  }
+                  updatedTasks.push(newTask)
+                  localStorage.setItem('nextTaskId', nextTaskId++)
+                }
+                localStorage.setItem('tasks', JSON.stringify(updatedTasks))
+              } else {
+                // Update the existing tasks with the same repeatId
+                const updatedTasks = localTasks.map((task) => {
+                  if (task.repeatId === store.selectedTask.repeatId) {
+                    task.title = store.selectedTask.title
+                    task.time = store.selectedTask.time
+                    task.description = store.selectedTask.description
+                  }
+                  return task
+                })
+
+                // Save the updated tasks to localStorage
+                localStorage.setItem('tasks', JSON.stringify(updatedTasks))
+              }
+            } else {
+              let index = localTasks.findIndex((t) => t.id === store.selectedTask.id)
+              if (
+                JSON.stringify(store.selectedTask.repeatParameters) !==
+                JSON.stringify(localTasks[index].repeatParameters)
+              ) {
+                const updatedTasks = localTasks.filter(
+                  (t) => t.id !== String(Number(store.selectedTask.id))
+                )
+                let dates = repeatTask(store.selectedTask.repeatParameters, localTasks[index].date)
+                store.selectedTask.repeatId = String(nextTaskId)
+                for (let i = 0; i < dates.length; i++) {
+                  // Create a new task object for each iteration
+                  let newTask = {
+                    ...store.selectedTask,
+                    id: String(nextTaskId),
+                    date: new Date(dates[i]).toISOString().split('T')[0]
+                  }
+                  updatedTasks.push(newTask)
+                  localStorage.setItem('nextTaskId', nextTaskId++)
+                }
+                localStorage.setItem('tasks', JSON.stringify(updatedTasks))
+              } else {
+                // Update the existing task with the same repeatId
+                if (JSON.stringify(localTasks[index]) !== JSON.stringify(store.selectedTask)) {
+                  store.selectedTask.id = String(nextTaskId)
+                  store.selectedTask.repeatId = null
+                  store.selectedTask.repeatParameters = null
+                  localTasks[index] = store.selectedTask
+                  // Save the updated task to localStorage
+                  localStorage.setItem('tasks', JSON.stringify(localTasks))
+                  localStorage.setItem('nextTaskId', nextTaskId++)
+                }
+              }
+            }
+          }
+        } else {
+          const existingTaskIndex = localTasks.findIndex(
+            (task) => task.id === store.selectedTask.id
+          )
+          if (existingTaskIndex !== -1) {
+            // Task found, update its properties
+            localTasks[existingTaskIndex] = store.selectedTask
+          }
+          localStorage.setItem('tasks', JSON.stringify(localTasks))
         }
-        localStorage.setItem('tasks', JSON.stringify(localTasks))
       } else {
         const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
         // repeat new task
         if (store.selectedTask.repeatParameters) {
-          let dates = repeatTask(store.selectedTask.repeatParameters)
-          store.selectedTask.repeatId = String(nextTaskId++)
+          let dates = repeatTask(store.selectedTask.repeatParameters, store.selectedTask.date)
+          store.selectedTask.repeatId = String(nextTaskId)
           for (let i = 0; i < dates.length; i++) {
             // Create a new task object for each iteration
             let newTask = {
               ...store.selectedTask,
-              id: String(nextTaskId + i),
+              id: String(nextTaskId),
               date: new Date(dates[i]).toISOString().split('T')[0]
             }
-            console.log(newTask)
             localTasks.push(newTask)
+            localStorage.setItem('nextTaskId', nextTaskId++)
           }
           localStorage.setItem('tasks', JSON.stringify(localTasks))
-          localStorage.setItem('nextTaskId', nextTaskId + dates.length)
         } else {
           store.selectedTask.id = String(nextTaskId++)
           localTasks.push(store.selectedTask)
@@ -277,6 +413,7 @@ const saveTask = async () => {
       }
     }
     closeTaskCard()
+    closeThisOrAll()
   } catch (error) {
     // Handle errors
     console.error(error)
@@ -288,7 +425,8 @@ const openTaskCard = (event, task, day) => {
   if (
     event.target.closest('.task-card') ||
     event.target.closest('.task-repeat') ||
-    store.isRepeatOpen
+    store.isRepeatOpen ||
+    deleteThisOrAll.value
   ) {
     // Clicked inside the task card, don't trigger opening or closing
 
@@ -317,7 +455,7 @@ const openTaskCard = (event, task, day) => {
 
     document.addEventListener('click', openTaskCard)
   } else if (!task && store.isopencard) {
-    saveTask()
+    handleSaveThisOrAll()
   } else if (task && !store.isopencard) {
     //update existing task
 
@@ -364,7 +502,17 @@ fetchData()
           </tasklist>
         </div>
       </div>
-      <taskCard :fetchData="fetchData" :saveTask="saveTask" />
+      <taskCard
+        :fetchData="fetchData"
+        :handleSaveThisOrAll="handleSaveThisOrAll"
+        :openThisOrAll="openThisOrAll"
+        :closeThisOrAll="closeThisOrAll"
+        :deleteThisOrAll="deleteThisOrAll"
+      />
+      <div v-if="saveThisOrAll" class="thisOrAll">
+        <div @click="saveTask('this')">This Task</div>
+        <div @click="saveTask('all')">All Tasks</div>
+      </div>
     </div>
   </div>
 </template>
@@ -435,5 +583,27 @@ fetchData()
 .tasks {
   padding: 5px;
   flex-grow: 1;
+}
+.thisOrAll {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  top: 50%;
+  left: 50%;
+  width: 150px;
+  padding: 4px;
+  transform: translate(-50%, -50%);
+  border-radius: 6px;
+  background: linear-gradient(165deg, rgb(32, 32, 32), #181818);
+  border: 1px solid #303030;
+  z-index: 10;
+  div {
+    cursor: pointer;
+    padding: 6px 8px;
+    &:hover {
+      background: #292929;
+      border-radius: 4px;
+    }
+  }
 }
 </style>

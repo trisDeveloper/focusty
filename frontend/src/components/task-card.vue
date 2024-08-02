@@ -2,17 +2,31 @@
 import axios from 'axios'
 import taskRepeat from './task-repeat.vue'
 import { useStore } from '@/stores'
-const props = defineProps(['fetchData', 'task', 'saveTask'])
+const props = defineProps([
+  'fetchData',
+  'task',
+  'handleSaveThisOrAll',
+  'closeThisOrAll',
+  'openThisOrAll',
+  'deleteThisOrAll'
+])
 const store = useStore()
-const deleteTask = async (task) => {
+
+const deleteTask = async (task, deleteThisOrAll) => {
   try {
     closeTaskCard()
+    props.closeThisOrAll()
     if (localStorage.getItem('userId')) {
       await axios.delete(`/api/users/${store.user.id}/tasks/${task.id}/`, { done: task.done })
     } else {
       const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
-      const updatedTasks = localTasks.filter((t) => t.id !== task.id)
-      localStorage.setItem('tasks', JSON.stringify(updatedTasks))
+      if (task.repeatId && deleteThisOrAll == 'all') {
+        const updatedTasks = localTasks.filter((t) => t.repeatId !== task.repeatId)
+        localStorage.setItem('tasks', JSON.stringify(updatedTasks))
+      } else {
+        const updatedTasks = localTasks.filter((t) => t.id !== task.id)
+        localStorage.setItem('tasks', JSON.stringify(updatedTasks))
+      }
     }
   } catch (error) {
     // Handle errors
@@ -101,7 +115,11 @@ props.fetchData()
         title="Delete Task"
         icon="fa-regular fa-trash-can"
         class="trash"
-        @click="deleteTask(store.selectedTask)"
+        @click="
+          store.selectedTask.repeatId
+            ? props.openThisOrAll('delete')
+            : deleteTask(store.selectedTask, 'this')
+        "
       />
       <!-- done icon -->
       <font-awesome-icon
@@ -116,6 +134,7 @@ props.fetchData()
         title="Repeat Task"
         icon="fa-solid fa-repeat"
         class="repeat"
+        :style="store.selectedTask.repeatParameters ? { color: '#3eff78e0' } : ''"
         @click="openRepeatCard()"
       />
     </div>
@@ -125,7 +144,7 @@ props.fetchData()
         class="task-title"
         v-model="store.selectedTask.title"
         @input="updateTaskTitle"
-        @keyup.enter="props.saveTask"
+        @keyup.enter="props.handleSaveThisOrAll"
         placeholder="Title"
       />
       <font-awesome-icon icon="fa-solid fa-pencil" />
@@ -163,10 +182,13 @@ props.fetchData()
       class="task-desc"
       v-model="store.selectedTask.description"
       @input="updateTaskDescription"
-      @keyup.enter="props.saveTask"
+      @keyup.enter="props.handleSaveThisOrAll"
       placeholder="Description"
     />
-
+    <div v-if="props.deleteThisOrAll" class="thisOrAll">
+      <div @click="deleteTask(store.selectedTask, 'this')">This Task</div>
+      <div @click="deleteTask(store.selectedTask, 'all')">All Tasks</div>
+    </div>
     <taskRepeat v-if="store.isRepeatOpen"></taskRepeat>
   </div>
 </template>
@@ -177,7 +199,7 @@ props.fetchData()
   padding: 5px;
   flex-grow: 1;
   .done {
-    color: #393949;
+    color: #303030;
     text-decoration: line-through;
     transition: all 0.3s;
   }
@@ -194,7 +216,7 @@ props.fetchData()
   border-radius: 10px;
   padding: 20px;
   background-color: #0b0c0d;
-  border: 1px solid #8269ac;
+  border: 1px solid #303030;
   box-shadow: 0px 2px 10px 2px #03030e41;
   z-index: 10;
   .task-actions {
@@ -204,10 +226,11 @@ props.fetchData()
     color: #ddd;
     font-size: 18px;
     .trash,
-    .checkbox {
+    .checkbox,
+    .repeat {
       padding-left: 10px;
       &:hover {
-        color: #c4a3ff;
+        color: #818181;
       }
     }
   }
@@ -251,7 +274,7 @@ props.fetchData()
     display: flex;
     align-items: center;
     .date-picker {
-      border: 1px solid #a984ff;
+      border: 1px solid #303030;
       background: #131518 !important;
       position: absolute;
       button {
@@ -262,7 +285,7 @@ props.fetchData()
       }
     }
     .vc-popover-content-wrapper .vc-popover-content button {
-      background: #06061b !important;
+      background: #2b2b2b !important;
       color: #fff;
     }
     .date-btn {

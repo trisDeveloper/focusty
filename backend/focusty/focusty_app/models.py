@@ -12,6 +12,8 @@ class Task(models.Model):
     title = models.CharField(max_length=255)
     date = models.DateField()
     time = models.TimeField(null=True)
+    repeatId = models.CharField(max_length=255, blank=True, null=True)
+    repeatParameters = models.JSONField(null=True, blank=True)
     done = models.BooleanField(default=False)
     description = models.CharField(max_length=255, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
