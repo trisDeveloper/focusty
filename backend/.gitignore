@@ -3,7 +3,7 @@
 .env.local
 .env.production
 .env.development
-venv/
+backend_env/
 
 *.pyc
 __pycache__/
