@@ -1,28 +1,45 @@
-
+# Ignore environment variables and environment-specific settings
 .env
 .env.local
 .env.production
 .env.development
 backend_env/
 
-*.pyc
+# Python artifacts
+*.py[cod]
 __pycache__/
-.coverage
+*.pyc
+
+# Django migrations
+**/migrations/
+
+# SQLite database
 db.sqlite3
+
+# Swap files and logs
 *.swp
 *.log
+
+# Local Django settings and secrets
 local_settings.py
+secrets.py
+
+# Static files and uploads
 static/
 media/
-docs/
-secrets.py
-migrations/
 profile_pictures/
-# Editor directories and files
-.idea
-.vscode
+
+# Test coverage
+.coverage
+
+# IDE-specific and editor directories
+.idea/
+.vscode/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# Docs and generated files
+docs/
