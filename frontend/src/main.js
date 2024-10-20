@@ -9,8 +9,8 @@ import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import 'v-calendar/style.css'
 
-axios.defaults.baseURL = 'https://trisdev.pythonanywhere.com'
-//axios.defaults.baseURL = 'http://127.0.0.1:8000/'
+//axios.defaults.baseURL = 'https://trisdev.pythonanywhere.com'
+axios.defaults.baseURL = 'http://127.0.0.1:8000/'
 // font awesome icons
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {

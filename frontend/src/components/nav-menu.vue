@@ -90,7 +90,7 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss" scoped>
-@import './../styles.scss';
+@use '@/styles.scss' as *;
 .navbar {
   display: flex;
   justify-content: space-between;

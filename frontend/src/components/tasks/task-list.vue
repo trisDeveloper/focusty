@@ -41,7 +41,7 @@ const updateTaskDoneStatus = async (task) => {
 props.fetchData()
 </script>
 <style lang="scss">
-@import './../styles.scss';
+@use '@/styles.scss' as *;
 .tasks {
   padding: 5px;
   flex-grow: 1;

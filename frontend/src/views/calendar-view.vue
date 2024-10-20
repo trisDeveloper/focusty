@@ -3,8 +3,8 @@ import axios from 'axios'
 import { useStore } from '@/stores'
 import { computed, ref, onMounted } from 'vue'
 import Sortable from 'sortablejs'
-import tasklist from './../components/task-list.vue'
-import taskCard from './../components/task-card.vue'
+import tasklist from '@/components/tasks/task-list.vue'
+import taskCard from '@/components/tasks/task-card.vue'
 const store = useStore()
 const props = defineProps(['filterdays'])
 const today = new Date()
@@ -518,7 +518,7 @@ fetchData()
 </template>
 
 <style lang="scss">
-@import './../styles.scss';
+@use './../styles.scss' as *;
 .none::before {
   display: none;
 }

@@ -17,7 +17,9 @@ const deleteTask = async (task, deleteThisOrAll) => {
     closeTaskCard()
     props.closeThisOrAll()
     if (localStorage.getItem('userId')) {
-      await axios.delete(`/api/users/${store.user.id}/tasks/${task.id}/`, { done: task.done })
+      await axios.delete(`/api/users/${store.user.id}/tasks/${task.id}/`, {
+        data: { deleteThisOrAll: deleteThisOrAll }
+      })
     } else {
       const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
       if (task.repeatId && deleteThisOrAll == 'all') {
@@ -194,7 +196,7 @@ props.fetchData()
 </template>
 
 <style lang="scss">
-@import './../styles.scss';
+@use '@/styles.scss' as *;
 .tasks {
   padding: 5px;
   flex-grow: 1;

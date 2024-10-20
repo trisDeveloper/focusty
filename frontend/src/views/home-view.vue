@@ -1,8 +1,8 @@
 <script setup>
 import { useStore } from '@/stores'
 import { ref, watch } from 'vue'
-import TodayTasks from './CalendarView.vue'
-import Pomodoro from './pomodoroView.vue'
+import TodayTasks from './calendar-view.vue'
+import Pomodoro from './pomodoro-view.vue'
 const store = useStore()
 const msg = ref('')
 

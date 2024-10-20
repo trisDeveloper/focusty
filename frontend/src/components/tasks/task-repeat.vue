@@ -182,7 +182,7 @@ const cancel = () => {
 </template>
 
 <style lang="scss">
-@import './../styles.scss';
+@use '@/styles.scss' as *;
 
 .task-repeat {
   position: absolute;
