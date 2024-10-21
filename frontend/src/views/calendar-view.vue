@@ -5,15 +5,15 @@ import { computed, ref, onMounted } from 'vue'
 import Sortable from 'sortablejs'
 import tasklist from '@/components/tasks/task-list.vue'
 import taskCard from '@/components/tasks/task-card.vue'
+import { repeatTask } from '@/utils/repeat-task-logic'
 const store = useStore()
 const props = defineProps(['filterdays'])
 const today = new Date()
 const saveThisOrAll = ref(false)
 const deleteThisOrAll = ref(false)
 
-let nextTaskId = localStorage.getItem('nextTaskId') || 1
-
 // resposive week view
+let nextTaskId = localStorage.getItem('nextTaskId') || 1
 const isWideScreen = ref(window.innerWidth >= 1075 || window.innerWidth <= 600)
 
 const nextDays = computed(() => {
@@ -93,7 +93,7 @@ const dropTaskDate = async (task, date) => {
   }
   fetchData()
 }
-// date format    - thu feb 8 -
+// date format - thu feb 8 -
 const formatDatePart = (date, part) => {
   const options = {
     weekday: 'short',
@@ -213,61 +213,19 @@ const handleSaveThisOrAll = () => {
   const tasksWithSameRepeatId = store.tasks.filter(
     (t) => t.repeatId === store.selectedTask.repeatId
   )
+  const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
+  let index = localTasks.findIndex((t) => t.id === store.selectedTask.id)
   if (
     tasksWithSameRepeatId.length > 1 &&
     store.selectedTask.repeatId &&
-    JSON.stringify(store.tasks.find((task) => task.id == store.selectedTask.id)) !==
-      JSON.stringify(store.selectedTask)
+    JSON.stringify(localTasks[index]) !== JSON.stringify(store.selectedTask)
   ) {
+    // open card for choosing updating this task or all tasks
     openThisOrAll('save')
   } else {
+    // directly save this task only - the default
     saveTask()
   }
-}
-
-const repeatTask = (prams, start) => {
-  let dates = []
-  if (prams) {
-    let startDate = new Date(start)
-    const repeatUnits = (prams) => {
-      const tempDate = new Date(startDate)
-      if (prams.everyUnit == 'days') {
-        //TO DO: add tasks on those dates
-        dates.push(tempDate)
-        startDate.setDate(startDate.getDate() + prams.everyNumber)
-      } else if (prams.everyUnit === 'weeks') {
-        prams.selectedDays.forEach((day) => {
-          const daysToAdd = (day - tempDate.getDay() + 7) % 7
-          tempDate.setDate(tempDate.getDate() + daysToAdd)
-          // add tasks
-          dates.push(tempDate)
-        })
-        startDate.setDate(startDate.getDate() + 7 * prams.everyNumber)
-      } else if (prams.everyUnit == 'months') {
-        //TO DO: add tasks on those dates
-        dates.push(tempDate)
-        startDate.setMonth(startDate.getMonth() + prams.everyNumber)
-      } else if (prams.everyUnit == 'years') {
-        //TO DO: add tasks on those dates
-        dates.push(tempDate)
-        startDate.setFullYear(startDate.getFullYear() + prams.everyNumber)
-      }
-    }
-    if (prams.repeatEnd == 'after') {
-      for (let i = 0; i < prams.occurrences; i++) {
-        repeatUnits(prams)
-      }
-    } else if (prams.repeatEnd == 'on') {
-      while (startDate <= new Date(prams.endDate)) {
-        repeatUnits(prams)
-      }
-    } else if (prams.repeatEnd == 'never') {
-      for (let i = 0; i < 730; i++) {
-        repeatUnits(prams)
-      }
-    }
-  }
-  return dates
 }
 
 const saveTask = async (thisOrAll = 'this') => {
@@ -320,19 +278,12 @@ const saveTask = async (thisOrAll = 'this') => {
                 const updatedTasks = localTasks.filter(
                   (t) => t.repeatId !== String(Number(store.selectedTask.repeatId))
                 )
-                let dates = repeatTask(store.selectedTask.repeatParameters, localTasks[index].date)
-                store.selectedTask.repeatId = String(nextTaskId)
-                for (let i = 0; i < dates.length; i++) {
-                  // Create a new task object for each iteration
-                  let newTask = {
-                    ...store.selectedTask,
-                    id: String(nextTaskId),
-                    date: new Date(dates[i]).toISOString().split('T')[0]
-                  }
-                  updatedTasks.push(newTask)
-                  localStorage.setItem('nextTaskId', nextTaskId++)
-                }
-                localStorage.setItem('tasks', JSON.stringify(updatedTasks))
+                repeatTask(
+                  store,
+                  store.selectedTask.repeatParameters,
+                  localTasks[index].date,
+                  updatedTasks
+                )
               } else {
                 // Update the existing tasks with the same repeatId
                 const updatedTasks = localTasks.map((task) => {
@@ -365,19 +316,12 @@ const saveTask = async (thisOrAll = 'this') => {
               const updatedTasks = localTasks.filter(
                 (t) => t.id !== String(Number(store.selectedTask.id))
               )
-              let dates = repeatTask(store.selectedTask.repeatParameters, localTasks[index].date)
-              store.selectedTask.repeatId = String(nextTaskId)
-              for (let i = 0; i < dates.length; i++) {
-                // Create a new task object for each iteration
-                let newTask = {
-                  ...store.selectedTask,
-                  id: String(nextTaskId),
-                  date: new Date(dates[i]).toISOString().split('T')[0]
-                }
-                updatedTasks.push(newTask)
-                localStorage.setItem('nextTaskId', nextTaskId++)
-              }
-              localStorage.setItem('tasks', JSON.stringify(updatedTasks))
+              repeatTask(
+                store,
+                store.selectedTask.repeatParameters,
+                localTasks[index].date,
+                updatedTasks
+              )
             } else {
               // Update the existing task with the same repeatId
               if (JSON.stringify(localTasks[index]) !== JSON.stringify(store.selectedTask)) {
@@ -407,19 +351,14 @@ const saveTask = async (thisOrAll = 'this') => {
       // new task
       else {
         const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
+        // repeat task
         if (store.selectedTask.repeatParameters) {
-          let dates = repeatTask(store.selectedTask.repeatParameters, store.selectedTask.date)
-          store.selectedTask.repeatId = String(nextTaskId)
-          for (let i = 0; i < dates.length; i++) {
-            let newTask = {
-              ...store.selectedTask,
-              id: String(nextTaskId),
-              date: new Date(dates[i]).toISOString().split('T')[0]
-            }
-            localTasks.push(newTask)
-            localStorage.setItem('nextTaskId', nextTaskId++)
-          }
-          localStorage.setItem('tasks', JSON.stringify(localTasks))
+          repeatTask(
+            store,
+            store.selectedTask.repeatParameters,
+            store.selectedTask.date,
+            localTasks
+          )
         } else {
           store.selectedTask.id = String(nextTaskId++)
           localTasks.push(store.selectedTask)

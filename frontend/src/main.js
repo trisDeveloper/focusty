@@ -50,12 +50,14 @@ library.add(
   faForwardStep,
   faRepeat
 )
-
+const pinia = createPinia()
 const app = createApp(App)
 
-app.use(createPinia())
+app.use(pinia)
 app.use(router, axios)
 app.use(VCalendar, {})
 app.component('font-awesome-icon', FontAwesomeIcon)
 app.component('VueDatePicker', VueDatePicker)
 app.mount('#app')
+
+export { pinia }

@@ -3,6 +3,9 @@ import { ref } from 'vue'
 import { useStore } from '@/stores'
 const store = useStore()
 const weekDays = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
+
+const originalRepeatParams = JSON.parse(JSON.stringify(store.selectedTask.repeatParameters ?? {}))
+
 const everyNumber = ref(store.selectedTask.repeatParameters?.everyNumber ?? 1)
 const everyUnit = ref(store.selectedTask.repeatParameters?.everyUnit ?? 'days')
 const selectedDays = ref(
@@ -77,6 +80,10 @@ const save = () => {
   store.setIsRepeatOpen(false)
 }
 const cancel = () => {
+  store.setSelectedTask({
+    ...store.selectedTask,
+    repeatParameters: originalRepeatParams
+  })
   store.setIsRepeatOpen(false)
 }
 </script>
