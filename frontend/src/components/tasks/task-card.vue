@@ -8,6 +8,7 @@ const props = defineProps([
   'task',
   'handleSaveThisOrAll',
   'closeThisOrAll',
+  'closeTaskCard',
   'openThisOrAll',
   'deleteThisOrAll'
 ])
@@ -48,26 +49,6 @@ const openRepeatCard = () => {
     store.setIsRepeatOpen(true)
   }, 0)
   document.addEventListener('click', handleClickOutside)
-}
-
-const closeTaskCard = () => {
-  store.setIsOpenCard(false)
-
-  store.setSelectedTask({
-    id: null,
-    title: '',
-    date: null,
-    time: null,
-    repeatParameters: null,
-    repeatId: null,
-    description: '',
-    done: false
-  })
-  store.timepic = {
-    hours: 0,
-    minutes: 0
-  }
-  document.body.removeEventListener('click', closeTaskCard)
 }
 
 const updateTaskTitle = (event) => {

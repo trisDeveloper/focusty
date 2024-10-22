@@ -460,6 +460,7 @@ fetchData()
         :handleSaveThisOrAll="handleSaveThisOrAll"
         :openThisOrAll="openThisOrAll"
         :closeThisOrAll="closeThisOrAll"
+        :closeTaskCard="closeTaskCard"
         :deleteThisOrAll="deleteThisOrAll"
       />
       <div v-if="saveThisOrAll" class="thisOrAll">
