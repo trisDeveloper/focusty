@@ -1,6 +1,7 @@
 <script setup>
 import axios from 'axios'
 import taskRepeat from './task-repeat.vue'
+import { updateTaskDoneStatus } from '@/utils/update-task-done.js'
 import { useStore } from '@/stores'
 const props = defineProps([
   'fetchData',
@@ -49,26 +50,6 @@ const openRepeatCard = () => {
   document.addEventListener('click', handleClickOutside)
 }
 
-const updateTaskDoneStatus = async (task) => {
-  try {
-    task.done = !task.done
-    if (localStorage.getItem('userId')) {
-      await axios.patch(`/api/users/${store.user.id}/tasks/${task.id}/`, { done: task.done })
-    } else {
-      const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
-
-      const updatedTaskIndex = localTasks.findIndex((t) => t.id == Number(task.id))
-      if (updatedTaskIndex !== -1) {
-        localTasks[updatedTaskIndex].done = task.done
-        localStorage.setItem('tasks', JSON.stringify(localTasks))
-      }
-    }
-  } catch (error) {
-    // Handle errors
-    console.error(error)
-  }
-  props.fetchData()
-}
 const closeTaskCard = () => {
   store.setIsOpenCard(false)
 
@@ -128,7 +109,7 @@ props.fetchData()
         title="Mark As Done"
         icon="fa-regular fa-check-square"
         class="checkbox"
-        @click="updateTaskDoneStatus(store.selectedTask)"
+        @click="updateTaskDoneStatus(store, store.selectedTask, props)"
         :class="{ done: store.selectedTask.done }"
       />
       <!-- repeat icon -->
@@ -200,11 +181,6 @@ props.fetchData()
 .tasks {
   padding: 5px;
   flex-grow: 1;
-  .done {
-    color: #303030;
-    text-decoration: line-through;
-    transition: all 0.3s;
-  }
 }
 .task-card {
   position: fixed;
@@ -234,6 +210,11 @@ props.fetchData()
       &:hover {
         color: #818181;
       }
+    }
+    .done {
+      color: #818181 !important;
+      text-decoration: line-through;
+      transition: all 0.3s;
     }
   }
   .task-title input,
