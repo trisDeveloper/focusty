@@ -5,6 +5,7 @@ from .serializers import TaskSerializer, UserSerializer, PomodoroSerializer
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
+from rest_framework import status
 from rest_framework.decorators import api_view
 import json
 from django.db.models import Count
@@ -31,6 +32,8 @@ class TaskListCreate(generics.ListCreateAPIView):
 class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
+    
+
 
 @api_view(['GET'])
 def tasks_count(request, user_id):

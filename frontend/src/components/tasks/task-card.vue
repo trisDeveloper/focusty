@@ -1,6 +1,6 @@
 <script setup>
 import axios from 'axios'
-import taskRepeat from './task-repeat.vue'
+import taskRepeat from './task-repeat-card.vue'
 import { updateTaskDoneStatus } from '@/utils/update-task-done.js'
 import { useStore } from '@/stores'
 const props = defineProps([
@@ -16,7 +16,7 @@ const store = useStore()
 
 const deleteTask = async (task, deleteThisOrAll) => {
   try {
-    closeTaskCard()
+    props.closeTaskCard()
     props.closeThisOrAll()
     if (localStorage.getItem('userId')) {
       await axios.delete(`/api/users/${store.user.id}/tasks/${task.id}/`, {
