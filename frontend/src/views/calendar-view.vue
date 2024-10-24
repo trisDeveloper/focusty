@@ -9,6 +9,7 @@ import { repeatTask } from '@/utils/repeat-task-logic'
 import { saveTaskLogic } from '@/utils/save-task-logic'
 const store = useStore()
 const props = defineProps(['filterdays'])
+const tasks = ref([])
 const today = new Date()
 const saveThisOrAll = ref(false)
 const deleteThisOrAll = ref(false)
@@ -85,8 +86,6 @@ const dropTaskDate = async (task, date) => {
         localStorage.setItem('tasks', JSON.stringify(localTasks))
       }
     }
-
-    sortTasks()
   } catch (error) {
     // Handle errors
     console.error(error)
@@ -105,9 +104,16 @@ const formatDatePart = (date, part) => {
 
 // filter tasks per day
 const getTasksForDate = (date) => {
-  return store.tasks
+  return tasks.value
     .filter((task) => task.date === date)
-    .sort((a, b) => (a.done === b.done ? 0 : a.done ? 1 : -1))
+    .sort((a, b) => {
+      if (a.done !== b.done) return a.done ? 1 : -1
+      if (!a.time && !b.time) return 0
+      if (!a.time) return -1
+      if (!b.time) return 1
+
+      return a.time.localeCompare(b.time)
+    })
 }
 
 const handleResize = () => {
@@ -120,18 +126,15 @@ const fetchData = () => {
     axios
       .get(`/api/users/${localStorage.getItem('userId')}/tasks/`)
       .then((response) => {
-        store.setTasks(response.data || [])
+        tasks.value = response.data || []
       })
       .catch((error) => {
         console.error(error)
       })
   } else {
     const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
-    store.setTasks(localTasks)
+    tasks.value = localTasks
   }
-
-  // Sort tasks after fetching
-  sortTasks()
 }
 
 const moveTasksTodb = async () => {
@@ -152,20 +155,10 @@ const moveTasksTodb = async () => {
     console.error('Error moving tasks to database:', error)
   }
 }
-const sortTasks = () => {
-  store.tasks.sort((a, b) => {
-    // If a task doesn't have a time, it comes first
-    if (!a.time && !b.time) return 0
-    if (!a.time) return -1
-    if (!b.time) return 1
-    // Sort based on time
-    return a.time.localeCompare(b.time)
-  })
-}
 
-const saveTask = async (thisOrAll = 'this') => {
-  saveTaskLogic(thisOrAll, store, repeatTask, closeTaskCard, closeThisOrAll)
-  fetchData()
+const saveTask = (thisOrAll = 'this') => {
+  saveTaskLogic(thisOrAll, store, repeatTask, closeTaskCard, closeThisOrAll, fetchData)
+  document.removeEventListener('click', openTaskCard)
 }
 
 const closeTaskCard = () => {
@@ -215,7 +208,7 @@ const closeThisOrAll = (event) => {
 }
 
 const handleSaveThisOrAll = () => {
-  const tasksWithSameRepeatId = store.tasks.filter(
+  const tasksWithSameRepeatId = tasks.value.filter(
     (t) => t.repeatId === store.selectedTask.repeatId
   )
   const localTasks = JSON.parse(localStorage.getItem('tasks')) || []

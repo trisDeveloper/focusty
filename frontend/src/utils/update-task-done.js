@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 export const updateTaskDoneStatus = async (store, task, props) => {
   try {
     task.done = !task.done

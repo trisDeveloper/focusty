@@ -6,7 +6,8 @@ export const saveTaskLogic = async (
   store,
   repeatTask,
   closeTaskCard,
-  closeThisOrAll
+  closeThisOrAll,
+  fetchData
 ) => {
   try {
     if (store.selectedTask.title.trim() === '') {
@@ -23,10 +24,7 @@ export const saveTaskLogic = async (
         })
       } else {
         // New task creation
-        await axios.post(`/api/users/${store.user.id}/tasks/`, {
-          ...store.selectedTask,
-          thisOrAll
-        })
+        await axios.post(`/api/users/${store.user.id}/tasks/`, store.selectedTask)
       }
     } else {
       // update task
@@ -155,5 +153,7 @@ export const saveTaskLogic = async (
     closeThisOrAll()
   } catch (error) {
     console.error(error)
+  } finally {
+    fetchData()
   }
 }

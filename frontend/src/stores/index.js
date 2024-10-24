@@ -2,7 +2,6 @@ import { defineStore } from 'pinia'
 
 export const useStore = defineStore('storeId', {
   state: () => ({
-    tasks: [],
     user: {
       id: null,
       username: null,
@@ -31,9 +30,6 @@ export const useStore = defineStore('storeId', {
     }
   }),
   actions: {
-    setTasks(tasks) {
-      this.tasks = tasks
-    },
     setIsOpenCard(value) {
       this.isopencard = value
     },
