@@ -50,8 +50,8 @@ const displayedDays = computed(() => {
 })
 onMounted(() => {
   createSortableInstances()
-  fetchData()
   moveTasksTodb()
+  fetchData()
 })
 
 const createSortableInstances = () => {
@@ -143,11 +143,12 @@ const moveTasksTodb = async () => {
     if (userId) {
       const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
       if (localTasks.length >= 1) {
-        // Move tasks from local storage to database
-        for (let i = 0; i < localTasks.length; i++) {
-          localTasks[i].user = userId // Assign user ID to each task
-          await axios.post(`/api/users/${userId}/tasks/`, localTasks[i])
-        }
+        await Promise.all(
+          localTasks.map((task) => {
+            task.user = userId
+            axios.post(`/api/users/${userId}/tasks/`, task)
+          })
+        )
         localStorage.removeItem('tasks')
       }
     }
