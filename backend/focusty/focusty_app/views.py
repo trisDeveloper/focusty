@@ -1,4 +1,5 @@
 # views.py
+import uuid
 from datetime import datetime
 from rest_framework import generics
 from .models import User, Task, Pomodoro
@@ -39,6 +40,7 @@ class TaskListCreate(generics.ListCreateAPIView):
         if repeat_params:
             # Call repeat_task to generate dates based on repeat parameters
             dates = repeat_task(repeat_params, start_date)
+            repeat_id = str(uuid.uuid4())
             for date_instance in dates:
 
                 new_serializer = self.get_serializer(
@@ -46,7 +48,7 @@ class TaskListCreate(generics.ListCreateAPIView):
                         **serializer.validated_data,
                         "user": user_id,
                         "date": date_instance.date(),
-                        "repeatId": "1",
+                        "repeatId": repeat_id,
                     }
                 )
                 new_serializer.is_valid(raise_exception=True)
@@ -59,6 +61,21 @@ class TaskListCreate(generics.ListCreateAPIView):
 class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
+    """def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        repeat_id = instance.repeatId
+        this_or_all = request.data.get("thisOrAll", "this")
+
+        if this_or_all == "this":
+            return super().update(request, *args, **kwargs)
+        elif this_or_all == "all" and repeat_id:
+            # Update all tasks with the same repeatId
+            tasks = Task.objects.filter(repeatId=repeat_id)
+            for task in tasks:
+                for key, value in request.data.items():
+                    setattr(task, key, value)
+                task.save()
+            return Response({"status": "updated all tasks"}, status=status.HTTP_200_OK)"""
 
 
 @api_view(["GET"])
