@@ -1,4 +1,5 @@
 let nextTaskId = localStorage.getItem('nextTaskId') || 1
+let neverMax = 365
 export const repeatTask = (store, prams, start, tasks) => {
   let dates = []
   let taskCount = 0
@@ -7,14 +8,19 @@ export const repeatTask = (store, prams, start, tasks) => {
 
     const repeatUnits = (prams) => {
       const tempDate = new Date(startDate)
-
+      // daily tasks
       if (prams.everyUnit === 'days') {
         dates.push(new Date(tempDate))
         startDate.setDate(startDate.getDate() + prams.everyNumber)
         taskCount++
-      } else if (prams.everyUnit === 'weeks') {
+      } //weekly tasks
+      else if (prams.everyUnit === 'weeks') {
         prams.selectedDays.forEach((day) => {
-          if (prams.occurrences && taskCount >= prams.occurrences) return
+          if (
+            (prams.occurrences && taskCount >= prams.occurrences) ||
+            (prams.repeatEnd === 'never' && taskCount >= neverMax)
+          )
+            return
 
           const currentDate = new Date(startDate)
           const daysToAdd = (day - currentDate.getDay() + 7) % 7
@@ -26,11 +32,15 @@ export const repeatTask = (store, prams, start, tasks) => {
           }
         })
         startDate.setDate(startDate.getDate() + 7 * prams.everyNumber)
-      } else if (prams.everyUnit === 'months') {
+      }
+      // monthly tasks
+      else if (prams.everyUnit === 'months') {
         dates.push(new Date(tempDate))
         startDate.setMonth(startDate.getMonth() + prams.everyNumber)
         taskCount++
-      } else if (prams.everyUnit === 'years') {
+      }
+      // yearly tasks
+      else if (prams.everyUnit === 'years') {
         dates.push(new Date(tempDate))
         startDate.setFullYear(startDate.getFullYear() + prams.everyNumber)
         taskCount++
@@ -46,7 +56,7 @@ export const repeatTask = (store, prams, start, tasks) => {
         repeatUnits(prams)
       }
     } else if (prams.repeatEnd === 'never') {
-      while (taskCount <= 365) {
+      while (taskCount <= neverMax) {
         repeatUnits(prams)
       }
     }

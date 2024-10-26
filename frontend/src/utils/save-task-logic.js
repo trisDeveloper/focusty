@@ -24,7 +24,10 @@ export const saveTaskLogic = async (
         })
       } else {
         // New task creation
-        await axios.post(`/api/users/${store.user.id}/tasks/`, store.selectedTask)
+        await axios.post(`/api/users/${store.user.id}/tasks/`, {
+          ...store.selectedTask,
+          thisOrAll
+        })
       }
     } else {
       // update task
