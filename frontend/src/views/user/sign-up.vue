@@ -25,7 +25,7 @@ const signup = async () => {
       email: response.data.email,
       pic: response.data.profile_picture,
       country: response.data.country,
-      join: response.data.join_date
+      join: response.data.date_joined.split('T')[0]
     })
     router.push('/')
 
@@ -79,11 +79,11 @@ const signup = async () => {
   color: #bbb;
   padding: 10px 0;
   a {
-    color: rgba(245, 222, 179, 0.8);
+    color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
     font-weight: bold;
     &:hover {
-      color: #ffcb6a;
+      color: #eee;
     }
   }
 }
@@ -108,7 +108,7 @@ form {
   }
   input {
     border: none;
-    background-color: #101027;
+    background-color: #16181a82;
     color: white;
     margin: 10px 0;
     padding: 7px 5px;
@@ -123,15 +123,15 @@ form {
     }
   }
   .signup-btn {
-    color: wheat;
+    color: #ffffffef;
     font-size: 20px;
     background: transparent;
     text-decoration: none;
     padding: 7px 10px;
-    border: 1px solid wheat;
+    border: 1px solid #ffffffef;
     margin: 15px 0;
     &:hover {
-      background: rgba(245, 222, 179, 0.15);
+      background: rgba(253, 253, 253, 0.15);
     }
     &:active {
       border: none;

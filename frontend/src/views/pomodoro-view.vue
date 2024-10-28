@@ -235,7 +235,7 @@ onUnmounted(() => {
   border-radius: 10px;
   padding: 20px;
   background-color: #0b0c0d;
-  border: 1px solid #8269ac;
+  border: 1px solid #222;
   box-shadow: 0px 2px 10px 2px #03030e41;
   z-index: 10;
   input {

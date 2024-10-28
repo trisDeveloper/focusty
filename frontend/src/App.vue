@@ -23,7 +23,7 @@ const fetchUser = async () => {
       pic: userData.profile_picture,
       country: userData.country,
       birthday: userData.birthday,
-      join: userData.join_date
+      join: userData.date_joined.split('T')[0]
     })
   } catch (error) {
     console.error('Error fetching user data:', error)

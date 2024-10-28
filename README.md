@@ -77,7 +77,7 @@ Throughout the development process, feedback loops were integral to refining and
 
 ## Roadmap 🗺️
 
-- **Enhanced Task Features**: Implement recurring tasks, sub tasks, task prioritization, and categories to elevate task management capabilities.
+- **Enhanced Task Features**: Implement sub tasks, task prioritization, and categories to elevate task management capabilities.
 - **Integration with External Tools**: Seamlessly integrate with popular productivity tools such as Google Calendar and Trello to streamline workflows and maximize efficiency.
 - **Security Enhancements**: Strengthen security measures to safeguard user data and privacy, including implementing encryption protocols, enhancing authentication mechanisms, and conducting regular security audits.
 

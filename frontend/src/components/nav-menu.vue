@@ -17,29 +17,36 @@
     <router-link v-else to="/signup" class="signup-btn">Sign Up</router-link>
     <div class="sidebar" :class="{ active: isSidebarActive }" id="sidebar">
       <ul class="sidebar-menu">
-        <li class="menu-items">
-          <router-link @click="toggleSidebar" style="display: inline-block; width: 100%" to="/"
+        <li>
+          <router-link
+            class="menu-items"
+            @click="toggleSidebar"
+            style="display: inline-block; width: 100%"
+            to="/"
             ><font-awesome-icon icon="home" />Home</router-link
           >
         </li>
-        <li class="menu-items">
+        <li>
           <router-link
+            class="menu-items"
             @click="toggleSidebar"
             style="display: inline-block; width: 100%"
             to="/calendar"
             ><font-awesome-icon icon="fa-regular fa-calendar-check" />Calendar</router-link
           >
         </li>
-        <li class="menu-items">
+        <li>
           <router-link
+            class="menu-items"
             @click="toggleSidebar"
             style="display: inline-block; width: 100%"
             to="/pomodoro"
             ><font-awesome-icon icon="hourglass" />Pomodoro</router-link
           >
         </li>
-        <li class="menu-items">
+        <li>
           <router-link
+            class="menu-items"
             @click="toggleSidebar"
             style="display: inline-block; width: 100%"
             to="/journey"
@@ -172,22 +179,16 @@ onUnmounted(() => {
     .menu-items {
       list-style: none;
       padding: 15px;
-      border-left: 3px solid transparent;
+      border-left: 2px solid transparent;
       transition: 0.3s all ease-out;
+      text-decoration: none;
+      color: #ddd;
       svg {
         padding-right: 10px;
       }
-      a {
-        text-decoration: none;
-        color: #ddd;
-      }
       &:hover {
         background-color: #25252580;
-        box-sizing: content-box;
-        border-width: 0 0 0 1px;
-        border-style: solid;
-        border-image: $border-gradient;
-        border-image-slice: 1;
+        border-left: 2px solid white;
         svg {
           color: #dadada;
         }

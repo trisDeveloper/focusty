@@ -41,7 +41,7 @@ const updateProfile = async () => {
         pic: response.data.profile_picture,
         birthday: response.data.birthday,
         country: response.data.country,
-        join: response.data.join_date
+        join: response.data.date_joined.split('T')[0]
       })
     } else {
       alert('Failed to update profile.')
@@ -207,7 +207,7 @@ const deleteImage = async () => {
   flex-wrap: wrap;
   .intro,
   .edition {
-    background: #10102b;
+    background: #16181a82;
     padding: 10px 7px;
     min-width: 270px;
     margin: 5px;
@@ -230,7 +230,7 @@ const deleteImage = async () => {
       height: 150px;
       position: relative;
       color: #0b0c0d;
-      background: #fff897;
+      background: #eee;
       width: 150px;
       border-radius: 8%;
       margin: 15px;
@@ -247,7 +247,7 @@ const deleteImage = async () => {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        border: 3px solid #fff897;
+        border: 3px solid #eee;
         border-radius: inherit;
       }
       .trash {
@@ -267,18 +267,19 @@ const deleteImage = async () => {
   }
 }
 .change-pic {
-  color: #fff897;
+  color: #eee;
   text-decoration: none;
   text-align: center;
   background: transparent;
   width: 200px;
   padding: 7px 10px;
-  border: 2px solid #fff897;
+  border: 2px solid #eee;
   border-radius: 7px;
   margin-bottom: 15px;
   font-size: 18px;
   &:hover {
-    background: rgba(245, 222, 179, 0.15);
+    background: rgba(231, 231, 231, 0.15);
+    cursor: pointer;
   }
   &:active {
     border: 2px solid transparent;
@@ -295,7 +296,7 @@ const deleteImage = async () => {
   }
   input {
     border: none;
-    background-color: #19193d;
+    background-color: #16181a82;
     color: white;
     margin: 0 0 15px 0;
     padding: 7px 5px;
