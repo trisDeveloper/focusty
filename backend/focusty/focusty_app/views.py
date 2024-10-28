@@ -10,8 +10,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 import json
-from django.db.models import Count
-from django.db.models import Sum
+from django.db.models import Count, Sum
 from .task_repeat import repeat_task
 
 
@@ -61,21 +60,95 @@ class TaskListCreate(generics.ListCreateAPIView):
 class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
-    """def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        repeat_id = instance.repeatId
-        this_or_all = request.data.get("thisOrAll", "this")
 
-        if this_or_all == "this":
-            return super().update(request, *args, **kwargs)
-        elif this_or_all == "all" and repeat_id:
-            # Update all tasks with the same repeatId
-            tasks = Task.objects.filter(repeatId=repeat_id)
-            for task in tasks:
-                for key, value in request.data.items():
-                    setattr(task, key, value)
-                task.save()
-            return Response({"status": "updated all tasks"}, status=status.HTTP_200_OK)"""
+    def perform_update(self, serializer):
+        task = self.get_object()
+        repeat_id = task.repeatId
+        update_data = serializer.validated_data
+        update_scope = self.request.data.get("thisOrAll", "this")  # "all" or "this"
+        repeat_params = update_data.get("repeatParameters", None)
+
+        # If updating a repeat series
+        if repeat_id:
+            if update_scope == "all":
+                # Removing repeat settings if `repeatParameters` is None
+                if repeat_params is None:
+                    task.repeatId = None
+                    task.repeatParameters = None
+                    task.save()
+                    Task.objects.filter(repeatId=repeat_id).delete()
+
+                else:
+                    # Update all tasks in the series with new repeat parameters
+                    repeat_start_date = (
+                        Task.objects.filter(repeatId=repeat_id).earliest("date").date
+                    )
+                    Task.objects.filter(repeatId=repeat_id).delete()
+                    new_dates = repeat_task(repeat_params, repeat_start_date)
+
+                    # Recreate tasks with updated repeat parameters
+                    for date in new_dates:
+                        new_task_data = {
+                            **update_data,
+                            "user": task.user_id,
+                            "date": date.date(),
+                            "repeatId": repeat_id,
+                        }
+                        serializer_class = self.get_serializer(data=new_task_data)
+                        serializer_class.is_valid(raise_exception=True)
+                        serializer_class.save()
+            else:
+                # Update only the selected task
+                if repeat_params is not None and repeat_params != task.repeatParameters:
+                    # New repeat series with updated repeatParameters for this task only
+                    new_repeat_id = str(uuid.uuid4())
+                    start_date = task.date
+                    Task.objects.filter(id=task.id).delete()
+                    # Generate repeated instances
+                    new_dates = repeat_task(repeat_params, start_date)
+                    for date in new_dates:
+                        new_task_data = {
+                            **update_data,
+                            "user": task.user_id,
+                            "date": date.date(),
+                            "repeatId": new_repeat_id,
+                        }
+                        serializer_class = self.get_serializer(data=new_task_data)
+                        serializer_class.is_valid(raise_exception=True)
+                        serializer_class.save()
+                else:
+                    for field, value in update_data.items():
+                        setattr(task, field, value)
+
+                    # Set repeat fields to None
+                    task.repeatId = None
+                    task.repeatParameters = None
+
+                    # Save the task with all changes
+                    task.save()
+
+        # If the task is not currently repeated but needs to be set as repeated
+        elif repeat_params:
+            # Assign a new repeatId for the new repeat series
+            new_repeat_id = str(uuid.uuid4())
+            start_date = task.date
+            Task.objects.filter(id=task.id).delete()
+            # Generate repeated instances
+            new_dates = repeat_task(repeat_params, start_date)
+            for date in new_dates:
+                new_task_data = {
+                    **update_data,
+                    "user": task.user_id,
+                    "date": date.date(),
+                    "repeatId": new_repeat_id,
+                }
+                serializer_class = self.get_serializer(data=new_task_data)
+                serializer_class.is_valid(raise_exception=True)
+                serializer_class.save()
+
+        else:
+            # If no repeat action is needed, update the task as usual
+            serializer.save()
 
 
 @api_view(["GET"])

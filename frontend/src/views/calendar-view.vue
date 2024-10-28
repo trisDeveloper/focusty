@@ -213,11 +213,14 @@ const handleSaveThisOrAll = () => {
     (t) => t.repeatId === store.selectedTask.repeatId
   )
   const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
-  let index = localTasks.findIndex((t) => t.id === store.selectedTask.id)
+  let index =
+    localTasks.length !== 0
+      ? localTasks[localTasks.findIndex((t) => t.id === store.selectedTask.id)]
+      : tasks.value[tasks.value.findIndex((task) => task.id === store.selectedTask.id)]
   if (
     tasksWithSameRepeatId.length > 1 &&
     store.selectedTask.repeatId &&
-    JSON.stringify(localTasks[index]) !== JSON.stringify(store.selectedTask)
+    JSON.stringify(index) !== JSON.stringify(store.selectedTask)
   ) {
     // open card for choosing updating this task or all tasks
     openThisOrAll('save')

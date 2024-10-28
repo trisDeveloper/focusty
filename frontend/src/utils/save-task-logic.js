@@ -38,17 +38,15 @@ export const saveTaskLogic = async (
           // don't repeat task or remove repeating a task
           if (thisOrAll == 'all') {
             if (store.selectedTask.repeatParameters == null) {
-              const updatedTasks = localTasks.filter(
-                (task) =>
-                  task.repeatId !== store.selectedTask.repeatId || task.id === store.selectedTask.id
-              )
               store.selectedTask.repeatId = null
               store.selectedTask.repeatParameters = null
-
-              const index = updatedTasks.findIndex((task) => task.id === store.selectedTask.id)
+              const index = localTasks.findIndex((task) => task.id === store.selectedTask.id)
               if (index !== -1) {
-                updatedTasks[index] = { ...store.selectedTask }
+                localTasks[index] = { ...store.selectedTask }
               }
+              const updatedTasks = localTasks.filter(
+                (task) => task.repeatId == store.selectedTask.repeatId
+              )
               localStorage.setItem('tasks', JSON.stringify(updatedTasks))
             }
             // repeat task
@@ -56,47 +54,27 @@ export const saveTaskLogic = async (
               // change repeat parameters for all repeating tasks
 
               let index = localTasks.findIndex((t) => t.repeatId === store.selectedTask.repeatId)
-              if (
-                JSON.stringify(store.selectedTask.repeatParameters) !==
-                JSON.stringify(localTasks[index].repeatParameters)
-              ) {
-                const updatedTasks = localTasks.filter(
-                  (t) => t.repeatId !== String(Number(store.selectedTask.repeatId))
-                )
-                repeatTask(
-                  store,
-                  store.selectedTask.repeatParameters,
-                  localTasks[index].date,
-                  updatedTasks
-                )
-              } else {
-                // Update the existing tasks with the same repeatId
-                const updatedTasks = localTasks.map((task) => {
-                  if (task.repeatId === store.selectedTask.repeatId) {
-                    task.title = store.selectedTask.title
-                    task.time = store.selectedTask.time
-                    task.description = store.selectedTask.description
-                  }
-                  return task
-                })
 
-                // Save the updated tasks to localStorage
-                localStorage.setItem('tasks', JSON.stringify(updatedTasks))
-              }
+              const updatedTasks = localTasks.filter(
+                (t) => t.repeatId !== String(Number(store.selectedTask.repeatId))
+              )
+              repeatTask(
+                store,
+                store.selectedTask.repeatParameters,
+                localTasks[index].date,
+                updatedTasks
+              )
+              // Save the updated tasks to localStorage
+              localStorage.setItem('tasks', JSON.stringify(updatedTasks))
             }
+
             // change repeat parameters for this task only
           } else {
             let index = localTasks.findIndex((t) => t.id === store.selectedTask.id)
-            if (store.selectedTask.repeatParameters == null) {
-              store.selectedTask.repeatId = null
-              store.selectedTask.repeatParameters = null
-              localTasks[index] = store.selectedTask
-              // Save the updated task to localStorage
-              localStorage.setItem('tasks', JSON.stringify(localTasks))
-              localStorage.setItem('nextTaskId', nextTaskId++)
-            } else if (
+            if (
+              store.selectedTask.repeatParameters !== null &&
               JSON.stringify(store.selectedTask.repeatParameters) !==
-              JSON.stringify(localTasks[index].repeatParameters)
+                JSON.stringify(localTasks[index].repeatParameters)
             ) {
               const updatedTasks = localTasks.filter(
                 (t) => t.id !== String(Number(store.selectedTask.id))
