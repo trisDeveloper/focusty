@@ -20,7 +20,7 @@ const deleteTask = async (task, deleteThisOrAll) => {
     props.closeThisOrAll()
     if (localStorage.getItem('userId')) {
       await axios.delete(`/api/users/${store.user.id}/tasks/${task.id}/`, {
-        data: { deleteThisOrAll: deleteThisOrAll }
+        data: { thisOrAll: deleteThisOrAll }
       })
     } else {
       const localTasks = JSON.parse(localStorage.getItem('tasks')) || []

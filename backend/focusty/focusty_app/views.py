@@ -150,6 +150,21 @@ class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
             # If no repeat action is needed, update the task as usual
             serializer.save()
 
+    def perform_destroy(self, instance):
+        repeat_id = instance.repeatId
+        delete_scope = self.request.data.get("thisOrAll", "this")
+
+        if repeat_id:
+            if delete_scope == "all":
+                # Delete all tasks in the repeat series
+                Task.objects.filter(repeatId=repeat_id).delete()
+            else:
+                # Delete just this specific task
+                instance.delete()
+        else:
+            # If the task is not repeated, just delete it
+            instance.delete()
+
 
 @api_view(["GET"])
 def tasks_count(request, user_id):
