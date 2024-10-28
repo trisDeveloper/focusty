@@ -9,6 +9,7 @@ Focusty is a full-stack productivity application meticulously crafted with Vue, 
 
 - **Pomodoro Timer**: Boost your productivity with a fully customizable Pomodoro timer, meticulously engineered for focus and efficiency.
 - **Task Management**: Effortlessly organize your tasks with intuitive **drag-and-drop** functionality, precise date and time pickers, and automatic sorting algorithms.
+-  ![](https://img.shields.io/badge/New!-steelblue) **Recurring Tasks**: Now supports repeating tasks with customizable intervals and easy management, ensuring you never miss a deadline.
 - **Calendar View**: Visualize your schedule with a sleek weekly calendar view, empowering dynamic task creation and seamless manipulation.
 - **User Authentication**: Securely authenticate, register, and manage your profile to safeguard your invaluable data and preferences.
 - **Statistics and Analytics**: Gain profound insights into your productivity journey with dynamic line charts, meticulously tracking task completion and Pomodoro focus time.
@@ -48,6 +49,7 @@ link: https://trisdeveloper.github.io/focusty/
 
 - **Adding Tasks**: Effortlessly add new tasks by clicking on the today tasks section and providing essential details such as title, description, date, and time.
 - **Editing Tasks**: Seamlessly modify task details, mark tasks as completed, or remove tasks directly from the calendar view.
+- **Recurring Tasks**: Easily create and manage repeating tasks to keep your productivity on track.
 - **Drag-and-Drop**: Streamline your workflow by effortlessly rearranging tasks through intuitive drag-and-drop gestures.
 
 ### Pomodoro Timer ⏲️
