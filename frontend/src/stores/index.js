@@ -14,6 +14,7 @@ export const useStore = defineStore('storeId', {
     },
     isopencard: false,
     isRepeatOpen: false,
+    isColorOpen: false,
     selectedTask: {
       id: null,
       title: '',
@@ -23,6 +24,7 @@ export const useStore = defineStore('storeId', {
       repeatParameters: null,
       repeatId: null,
       done: false,
+      color: '#232323',
       user: null
     },
     timepic: {
@@ -39,6 +41,9 @@ export const useStore = defineStore('storeId', {
     },
     setIsRepeatOpen(value) {
       this.isRepeatOpen = value
+    },
+    setIsColorOpen(value) {
+      this.isColorOpen = value
     },
     setSelectedTask(task) {
       this.selectedTask = task

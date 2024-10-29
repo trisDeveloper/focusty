@@ -255,6 +255,7 @@ const openTaskCard = (event, task, day) => {
         repeatParameters: null,
         repeatId: null,
         done: false,
+        color: '#232323',
         user: localStorage.getItem('userId') || null
       })
     }, 0)

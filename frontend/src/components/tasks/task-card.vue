@@ -1,6 +1,7 @@
 <script setup>
 import axios from 'axios'
 import taskRepeat from './task-repeat-card.vue'
+import taskColorCard from './task-color-card.vue'
 import { updateTaskDoneStatus } from '@/utils/update-task-done.js'
 import { useStore } from '@/stores'
 const props = defineProps([
@@ -43,12 +44,26 @@ const handleClickOutside = (event) => {
     store.setIsRepeatOpen(false)
     document.removeEventListener('click', handleClickOutside)
   }
+  if (store.isColorOpen && !event.target.closest('.color-palette')) {
+    store.setIsColorOpen(false)
+    document.removeEventListener('click', handleClickOutside)
+  }
 }
 const openRepeatCard = () => {
   setTimeout(() => {
     store.setIsRepeatOpen(true)
   }, 0)
   document.addEventListener('click', handleClickOutside)
+}
+const openColorCard = () => {
+  if (!store.isColorOpen) {
+    setTimeout(() => {
+      store.setIsColorOpen(true)
+    }, 0)
+    document.addEventListener('click', handleClickOutside)
+  } else {
+    handleClickOutside()
+  }
 }
 
 const updateTaskTitle = (event) => {
@@ -101,6 +116,15 @@ props.fetchData()
         :style="store.selectedTask.repeatParameters ? { color: '#3eff78e0' } : ''"
         @click="openRepeatCard()"
       />
+      <!-- repeat icon -->
+      <div
+        title="Task Color"
+        class="task-color"
+        :style="{
+          background: store.selectedTask.color ? store.selectedTask.color : '#232323'
+        }"
+        @click="openColorCard()"
+      ></div>
     </div>
     <!-- title -->
     <div class="task-title">
@@ -154,6 +178,7 @@ props.fetchData()
       <div @click="deleteTask(store.selectedTask, 'all')">All Tasks</div>
     </div>
     <taskRepeat v-if="store.isRepeatOpen"></taskRepeat>
+    <taskColorCard v-if="store.isColorOpen"></taskColorCard>
   </div>
 </template>
 
@@ -186,11 +211,19 @@ props.fetchData()
     font-size: 18px;
     .trash,
     .checkbox,
-    .repeat {
+    .repeat,
+    .task-color {
+      cursor: pointer;
       padding-left: 10px;
       &:hover {
         color: #818181;
       }
+    }
+    .task-color {
+      width: 19px;
+      height: 19px;
+      border: 2px solid #ccc;
+      border-radius: 50%;
     }
     .done {
       color: #818181 !important;

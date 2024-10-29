@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div :class="{ task, done: task.done }">
+    <div
+      :class="{ task, done: task.done }"
+      :style="{ background: `${task.color}33`, border: `1px solid ${task.color}` }"
+    >
       <font-awesome-icon
         icon="fa-regular fa-check-square"
         class="checkbox"
@@ -36,9 +39,7 @@ props.fetchData()
     box-sizing: border-box;
     $border: 1px;
     color: #fff;
-    background: linear-gradient(165deg, #49494973, #181818);
     background-clip: padding-box;
-    border: solid $border #333;
     border-radius: 7px;
     .checkbox {
       padding: 0 10px 0 0;

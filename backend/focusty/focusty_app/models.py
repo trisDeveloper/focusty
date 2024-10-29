@@ -20,6 +20,7 @@ class Task(models.Model):
     repeatId = models.CharField(max_length=255, blank=True, null=True)
     repeatParameters = models.JSONField(null=True, blank=True)
     done = models.BooleanField(default=False)
+    color = models.CharField(max_length=255)
     description = models.CharField(max_length=255, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
