@@ -1,18 +1,19 @@
 <script setup>
 import { useStore } from '@/stores'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 const store = useStore()
 const route = useRoute()
 
 const isCalendarView = computed(() => route.path.includes('/calendar'))
-
+const isWideScreen = ref(window.innerWidth >= 1075 || window.innerWidth <= 600)
+let daysNum = isWideScreen.value ? 7 : 4
 const next7Days = () => {
-  let date = new Date(store.weekStart).setDate(new Date(store.weekStart).getDate() + 7)
+  let date = new Date(store.weekStart).setDate(new Date(store.weekStart).getDate() + daysNum)
   store.setWeekStart(date)
 }
 const prev7Days = () => {
-  let date = new Date(store.weekStart).setDate(new Date(store.weekStart).getDate() - 7)
+  let date = new Date(store.weekStart).setDate(new Date(store.weekStart).getDate() - daysNum)
   store.setWeekStart(date)
 }
 const resetToToday = () => {
@@ -58,7 +59,7 @@ const resetToToday = () => {
     margin-left: 8px;
     background: transparent;
     color: #eee;
-    border: 0;
+    border: 1px solid #ffffff14;
     cursor: pointer;
     padding: 6px 10px;
     font-size: 16px;
