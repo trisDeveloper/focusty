@@ -5,6 +5,7 @@
         <font-awesome-icon icon="bars" />
       </button>
       <div class="date">{{ today }}</div>
+      <weekNavigation />
     </div>
     <div v-if="store.user.id !== null" class="profile-icon">
       <router-link to="/profile/">
@@ -58,6 +59,7 @@
   </nav>
 </template>
 <script setup>
+import weekNavigation from './week-navigation.vue'
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useStore } from '@/stores'
 const store = useStore()

@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 
 export const useStore = defineStore('storeId', {
   state: () => ({
+    weekStart: new Date(),
     user: {
       id: null,
       username: null,
@@ -30,6 +31,9 @@ export const useStore = defineStore('storeId', {
     }
   }),
   actions: {
+    setWeekStart(value) {
+      this.weekStart = value
+    },
     setIsOpenCard(value) {
       this.isopencard = value
     },

@@ -10,7 +10,6 @@ import { saveTaskLogic } from '@/utils/save-task-logic'
 const store = useStore()
 const props = defineProps(['filterdays'])
 const tasks = ref([])
-const today = new Date()
 const saveThisOrAll = ref(false)
 const deleteThisOrAll = ref(false)
 
@@ -20,8 +19,8 @@ const isWideScreen = ref(window.innerWidth >= 1075 || window.innerWidth <= 600)
 const nextDays = computed(() => {
   const nextDays = []
   for (let i = 0; i < 7; i++) {
-    const nextDay = new Date()
-    nextDay.setDate(today.getDate() + i)
+    const nextDay = new Date(store.weekStart)
+    nextDay.setDate(new Date(store.weekStart).getDate() + i)
     nextDays.push({
       weekday: formatDatePart(nextDay, 'weekday'),
       month: formatDatePart(nextDay, 'month'),

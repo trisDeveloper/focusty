@@ -24,7 +24,9 @@ import {
   faListCheck,
   faPause,
   faPencil,
-  faRepeat
+  faRepeat,
+  faChevronRight,
+  faChevronLeft
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
@@ -48,7 +50,9 @@ library.add(
   faGear,
   faPause,
   faForwardStep,
-  faRepeat
+  faRepeat,
+  faChevronRight,
+  faChevronLeft
 )
 const pinia = createPinia()
 const app = createApp(App)
