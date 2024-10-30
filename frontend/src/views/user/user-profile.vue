@@ -59,6 +59,7 @@ const updateProfile = async () => {
       }
     }
   }
+  window.location.reload()
 }
 const uploadPicture = (event) => {
   const file = event.target.files[0]

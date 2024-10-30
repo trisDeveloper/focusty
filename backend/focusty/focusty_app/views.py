@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
@@ -19,6 +19,7 @@ from .task_repeat import repeat_task
 class UserList(generics.ListCreateAPIView):
     queryset = User.objects.filter(is_staff=False)
     serializer_class = UserSerializer
+    # permission_classes = [IsAdminUser]
 
 
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -45,6 +46,9 @@ class RegisterView(generics.CreateAPIView):
         user = self.get_user_from_response(response.data)
 
         if user:
+            # Hash the password securely
+            user.set_password(user.password)
+            user.save()
             token = self.get_token(user)
             response.set_cookie(key="jwt", value=str(token), httponly=True)
             response.data["token"] = str(token)
@@ -77,7 +81,7 @@ def login_view(request):
                 {"success": False, "message": "User does not exist"}, status=404
             )
 
-        if password == user.password:
+        if user.check_password(password):
             # Generate token
             refresh = RefreshToken.for_user(user)
 
