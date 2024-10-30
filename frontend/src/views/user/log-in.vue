@@ -18,10 +18,10 @@ const login = async () => {
     })
     // Handle successful login
     localStorage.setItem('userId', response.data.user.id)
-    const [token, refresh] = [response.data.access, response.data.refresh]
-    if (token) {
-      Cookies.set('token', token, { expires: 7, secure: true, sameSite: 'Strict' })
-      Cookies.set('refresh', refresh, { expires: 7, secure: true, sameSite: 'Strict' })
+    const [access, refresh] = [response.data.access, response.data.refresh]
+    if (access && refresh) {
+      Cookies.set('access', access, { expires: 60 / 1440, secure: true, sameSite: 'Strict' })
+      Cookies.set('refresh', refresh, { expires: 60, secure: true, sameSite: 'Strict' })
     }
     store.setUser({
       id: response.data.user.id,

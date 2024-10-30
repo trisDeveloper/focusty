@@ -1,5 +1,6 @@
 # urls.py
 from django.urls import path
+from rest_framework_simplejwt.views import TokenRefreshView
 from .views import (
     UserList,
     UserDetail,
@@ -20,6 +21,7 @@ urlpatterns = [
     path("users/<int:user_id>/tasks/all/", tasks_count, name="tasks count"),
     path("login/", login_view, name="login"),
     path("register/", RegisterView.as_view(), name="register"),
+    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("users/<int:user_id>/pomodoros/", PomodoroListCreate.as_view()),
     path("users/<int:user_id>/pomodoros/<int:pk>/", PomodoroDetail.as_view()),
 ]

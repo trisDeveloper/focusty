@@ -73,7 +73,8 @@ const deleteAccount = () => {
       .then(() => {
         //window.reload()
         localStorage.clear()
-        Cookies.remove('token')
+        Cookies.remove('access')
+        Cookies.remove('refresh')
         store.setUser(null)
         router.push('/')
         window.location.href = '/focusty/'
@@ -88,7 +89,8 @@ const logout = () => {
   if (confirm('Are you sure you want to log out?')) {
     store.setUser(null)
     localStorage.clear()
-    Cookies.remove('token')
+    Cookies.remove('access')
+    Cookies.remove('refresh')
     router.push('/')
 
     window.location.href = '/'

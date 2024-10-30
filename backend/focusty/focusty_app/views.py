@@ -19,7 +19,7 @@ from .task_repeat import repeat_task
 class UserList(generics.ListCreateAPIView):
     queryset = User.objects.filter(is_staff=False)
     serializer_class = UserSerializer
-    # permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser]
 
 
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -49,15 +49,10 @@ class RegisterView(generics.CreateAPIView):
             # Hash the password securely
             user.set_password(user.password)
             user.save()
-            token = self.get_token(user)
-            response.set_cookie(key="jwt", value=str(token), httponly=True)
-            response.data["token"] = str(token)
+            token = RefreshToken.for_user(user)
+            response.data["access"] = str(token.access_token)
+            response.data["refresh"] = str(token)
         return response
-
-    def get_token(self, user):
-
-        refresh = RefreshToken.for_user(user)
-        return refresh.access_token
 
     def get_user_from_response(self, data):
         try:
@@ -83,7 +78,7 @@ def login_view(request):
 
         if user.check_password(password):
             # Generate token
-            refresh = RefreshToken.for_user(user)
+            token = RefreshToken.for_user(user)
 
             return JsonResponse(
                 {
@@ -93,8 +88,8 @@ def login_view(request):
                         "username": user.username,
                         "email": user.email,
                     },
-                    "access": str(refresh.access_token),
-                    "refresh": str(refresh),
+                    "access": str(token.access_token),
+                    "refresh": str(token),
                 }
             )
         else:

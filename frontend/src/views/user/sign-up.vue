@@ -20,9 +20,10 @@ const signup = async () => {
     })
     // Handle successful signup
     localStorage.setItem('userId', response.data.id)
-    const token = response.data.token
-    if (token) {
-      Cookies.set('token', token, { expires: 7, secure: true, sameSite: 'Strict' })
+    const [access, refresh] = [response.data.access, response.data.refresh]
+    if (access && refresh) {
+      Cookies.set('access', access, { expires: 60 / 1440, secure: true, sameSite: 'Strict' })
+      Cookies.set('refresh', refresh, { expires: 60, secure: true, sameSite: 'Strict' })
     }
     store.setUser({
       id: response.data.id,

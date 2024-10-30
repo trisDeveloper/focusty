@@ -13,19 +13,41 @@ import 'v-calendar/style.css'
 //axios
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL
 axios.defaults.headers['Content-Type'] = 'application/json'
-axios.interceptors.request.use(
-  (config) => {
-    const token = Cookies.get('token')
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`
+axios.defaults.withCredentials = true
+axios.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config
+    const access = Cookies.get('access')
+    if (access) {
+      axios.defaults.headers['Authorization'] = `Bearer ${access}`
+      return axios(originalRequest)
+    } else if (error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true
+
+      const refresh = Cookies.get('refresh')
+      if (refresh) {
+        const res = await axios.post('/api/token/refresh/', { refresh })
+        const newAccessToken = res.data.access
+        Cookies.set('access', newAccessToken, {
+          expires: 60 / 1440,
+          secure: true,
+          sameSite: 'Strict'
+        })
+        axios.defaults.headers['Authorization'] = `Bearer ${newAccessToken}`
+        return axios(originalRequest)
+      } else {
+        localStorage.clear()
+        Cookies.remove('access')
+        Cookies.remove('refresh')
+        router.push('/')
+
+        window.location.href = '/'
+      }
     }
-    return config
-  },
-  (error) => {
     return Promise.reject(error)
   }
 )
-
 // font awesome icons
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
