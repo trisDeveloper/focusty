@@ -1,6 +1,5 @@
 # views.py
-import uuid
-from datetime import datetime
+import uuid, json
 from rest_framework import generics
 from .models import User, Task, Pomodoro
 from .serializers import TaskSerializer, UserSerializer, PomodoroSerializer
@@ -9,7 +8,10 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
-import json
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
+
+
 from django.db.models import Count, Sum
 from .task_repeat import repeat_task
 
@@ -22,6 +24,83 @@ class UserList(generics.ListCreateAPIView):
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        obj = super().get_object()
+        if obj != self.request.user:
+            return JsonResponse(
+                {"error": "You do not have permission to access this data."}
+            )
+        return obj
+
+
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+
+        user = self.get_user_from_response(response.data)
+
+        if user:
+            token = self.get_token(user)
+            response.set_cookie(key="jwt", value=str(token), httponly=True)
+            response.data["token"] = str(token)
+        return response
+
+    def get_token(self, user):
+
+        refresh = RefreshToken.for_user(user)
+        return refresh.access_token
+
+    def get_user_from_response(self, data):
+        try:
+            user_id = data.get("id")
+            return User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return None
+
+
+@csrf_exempt
+def login_view(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        email = data.get("email")
+        password = data.get("password")
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return JsonResponse(
+                {"success": False, "message": "User does not exist"}, status=404
+            )
+
+        if password == user.password:
+            # Generate token
+            refresh = RefreshToken.for_user(user)
+
+            return JsonResponse(
+                {
+                    "success": True,
+                    "user": {
+                        "id": user.id,
+                        "username": user.username,
+                        "email": user.email,
+                    },
+                    "access": str(refresh.access_token),
+                    "refresh": str(refresh),
+                }
+            )
+        else:
+            return JsonResponse(
+                {"success": False, "message": "Invalid email or password"}, status=400
+            )
+    else:
+        return JsonResponse(
+            {"success": False, "message": "Method not allowed"}, status=405
+        )
 
 
 class TaskListCreate(generics.ListCreateAPIView):
@@ -175,42 +254,6 @@ def tasks_count(request, user_id):
     )
 
     return Response(tasks_count_by_date)
-
-
-@csrf_exempt
-def login_view(request):
-    if request.method == "POST":
-        data = json.loads(request.body)
-        email = data.get("email")
-        password = data.get("password")
-
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            return JsonResponse(
-                {"success": False, "message": "User does not exist"}, status=404
-            )
-        if password == user.password:
-            print(user)
-            return JsonResponse(
-                {
-                    "success": True,
-                    "user": {
-                        "id": user.id,
-                        "username": user.username,
-                        "email": user.email,
-                    },
-                }
-            )
-
-        else:
-            return JsonResponse(
-                {"success": False, "message": "Invalid email or password"}, status=400
-            )
-    else:
-        return JsonResponse(
-            {"success": False, "message": "Method not allowed"}, status=405
-        )
 
 
 class PomodoroDetail(generics.RetrieveUpdateDestroyAPIView):

@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { useStore } from '@/stores'
 import { useRouter } from 'vue-router'
+import Cookies from 'js-cookie'
 const router = useRouter()
 const store = useStore()
 const password = ref(null)
@@ -71,6 +72,7 @@ const deleteAccount = () => {
       .then(() => {
         //window.reload()
         localStorage.clear()
+        Cookies.remove('token')
         store.setUser(null)
         router.push('/')
         window.location.href = '/focusty/'
@@ -85,6 +87,7 @@ const logout = () => {
   if (confirm('Are you sure you want to log out?')) {
     store.setUser(null)
     localStorage.clear()
+    Cookies.remove('token')
     router.push('/')
 
     window.location.href = '/'

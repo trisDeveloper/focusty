@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import Cookies from 'js-cookie'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/stores'
@@ -12,13 +13,17 @@ const password = ref('')
 const errormsg = ref(null)
 const signup = async () => {
   try {
-    const response = await axios.post('/api/users/', {
+    const response = await axios.post('/api/register/', {
       username: username.value,
       email: email.value,
       password: password.value
     })
     // Handle successful signup
     localStorage.setItem('userId', response.data.id)
+    const token = response.data.token
+    if (token) {
+      Cookies.set('token', token, { expires: 7, secure: true, sameSite: 'Strict' })
+    }
     store.setUser({
       id: response.data.id,
       username: response.data.username,

@@ -1,6 +1,7 @@
 import './styles.scss'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import Cookies from 'js-cookie'
 import axios from 'axios'
 import App from './App.vue'
 import router from './router'
@@ -9,8 +10,22 @@ import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import 'v-calendar/style.css'
 
-//axios.defaults.baseURL = 'https://trisdev.pythonanywhere.com'
-axios.defaults.baseURL = 'http://127.0.0.1:8000/'
+//axios
+axios.defaults.baseURL = import.meta.env.VITE_BASE_URL
+axios.defaults.headers['Content-Type'] = 'application/json'
+axios.interceptors.request.use(
+  (config) => {
+    const token = Cookies.get('token')
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`
+    }
+    return config
+  },
+  (error) => {
+    return Promise.reject(error)
+  }
+)
+
 // font awesome icons
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {

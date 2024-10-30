@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/stores'
+import Cookies from 'js-cookie'
 const store = useStore()
 const router = useRouter()
 
@@ -17,6 +18,11 @@ const login = async () => {
     })
     // Handle successful login
     localStorage.setItem('userId', response.data.user.id)
+    const [token, refresh] = [response.data.access, response.data.refresh]
+    if (token) {
+      Cookies.set('token', token, { expires: 7, secure: true, sameSite: 'Strict' })
+      Cookies.set('refresh', refresh, { expires: 7, secure: true, sameSite: 'Strict' })
+    }
     store.setUser({
       id: response.data.user.id,
       username: response.data.user.username,
