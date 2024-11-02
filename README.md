@@ -1,9 +1,9 @@
 # Focusty 🚀
 
-> [!WARNING]
-> This application is currently under active development and may not be secure for handling sensitive information. Please refrain from using sensitive data until further notice.
+> [!TIP]
+> This application is actively in development. While additional security measures have been added, Focusty is still not intended for handling sensitive data in production.
 
-Focusty is a full-stack productivity application meticulously crafted with Vue, Vite, Python and Django. It seamlessly integrates Pomodoro focus techniques, advanced task management, and insightful analytics for individuals striving for peak productivity.
+Focusty is a full-stack productivity app built with Vue, Vite, Python, and Django, integrating Pomodoro techniques, advanced task management, and insightful analytics for anyone aiming for peak productivity.
 
 ## Features 🛠️
 
@@ -11,8 +11,10 @@ Focusty is a full-stack productivity application meticulously crafted with Vue, 
 - **Task Management**: Effortlessly organize your tasks with intuitive **drag-and-drop** functionality, precise date and time pickers, and automatic sorting algorithms.
 -  ![](https://img.shields.io/badge/New!-steelblue) **Recurring Tasks**: Now supports repeating tasks with customizable intervals and easy management, ensuring you never miss a deadline.
 - **Calendar View**: Visualize your schedule with a sleek weekly calendar view, empowering dynamic task creation and seamless manipulation.
-- **User Authentication**: Securely authenticate, register, and manage your profile to safeguard your invaluable data and preferences.
+- **Task Color Customization**: Personalize your tasks by changing colors!
+- **User Authentication**: Securely authenticate and manage profiles with JWT and password hashing.
 - **Statistics and Analytics**: Gain profound insights into your productivity journey with dynamic line charts, meticulously tracking task completion and Pomodoro focus time.
+- **Accessibility**: Now optimized to be 100% accessible, ensuring an inclusive user experience.
 
 ## Demo
 
@@ -48,7 +50,7 @@ link: https://trisdeveloper.github.io/focusty/
 ### Task Management 📅
 
 - **Adding Tasks**: Effortlessly add new tasks by clicking on the today tasks section and providing essential details such as title, description, date, and time.
-- **Editing Tasks**: Seamlessly modify task details, mark tasks as completed, or remove tasks directly from the calendar view.
+- **Editing Tasks**: Seamlessly modify task details, mark tasks as completed, change colors or remove tasks directly from the calendar view.
 - **Recurring Tasks**: Easily create and manage repeating tasks to keep your productivity on track.
 - **Drag-and-Drop**: Streamline your workflow by effortlessly rearranging tasks through intuitive drag-and-drop gestures.
 
@@ -77,9 +79,10 @@ Throughout the development process, feedback loops were integral to refining and
 
 ## Roadmap 🗺️
 
-- **Enhanced Task Features**: Implement sub tasks, task prioritization, and categories to elevate task management capabilities.
+- **Enhanced Task Features**: Implement sub tasks, and categories to elevate task management capabilities.
 - **Integration with External Tools**: Seamlessly integrate with popular productivity tools such as Google Calendar and Trello to streamline workflows and maximize efficiency.
-- **Security Enhancements**: Strengthen security measures to safeguard user data and privacy, including implementing encryption protocols, enhancing authentication mechanisms, and conducting regular security audits.
+- **Security Enhancements**: Regular security audits and data encryption, **OAuth** Integration to simplify login while maintaining security.
+
 
 ## Contributing 🤝
 
@@ -88,3 +91,4 @@ Contributions are invaluable to the continued evolution of Focusty. Whether you 
 ## License 📄
 
 This project is licensed under the MIT License.
+
