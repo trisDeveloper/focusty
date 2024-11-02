@@ -20,7 +20,7 @@ Focusty is a full-stack productivity app built with Vue, Vite, Python, and Djang
 
 link: https://trisdeveloper.github.io/focusty/
 
-![Focusty](https://raw.githubusercontent.com/trisDeveloper/focusty/main/Screenshot%20from%202024-02-22%2013-07-09.png)
+![Focusty](https://raw.githubusercontent.com/trisDeveloper/focusty/main/focusty%homepage.png)
 
 [![Focusty youtube video](https://img.youtube.com/vi/wrSbkanFiS0/0.jpg)](https://youtu.be/wrSbkanFiS0)
 
