@@ -18,7 +18,7 @@
       />
       <div>
         <div v-if="task.time" class="task-time">
-          {{ `${task.time.split(':')[0]}:${task.time.split(':')[1].padStart(2, '0')}` }}
+          {{ task.time }}
         </div>
         <p>{{ task.title }}</p>
       </div>

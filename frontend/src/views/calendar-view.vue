@@ -106,7 +106,6 @@ const getTasksForDate = (date) => {
   return tasks.value
     .filter((task) => task.date === date)
     .sort((a, b) => {
-      if (a.done !== b.done) return a.done ? 1 : -1
       if (!a.time && !b.time) return 0
       if (!a.time) return -1
       if (!b.time) return 1

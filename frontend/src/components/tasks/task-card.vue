@@ -77,7 +77,7 @@ const handleDateSelection = (selectedDate) => {
 
 const handleTimeSelection = (modelData) => {
   store.timepic = modelData
-  store.selectedTask.time = `${store.timepic.hours}:${store.timepic.minutes}`
+  store.selectedTask.time = `${store.timepic.hours < 10 ? '0' : ''}${store.timepic.hours}:${store.timepic.minutes < 10 ? '0' : ''}${store.timepic.minutes}`
 }
 
 const updateTaskDescription = (event) => {
