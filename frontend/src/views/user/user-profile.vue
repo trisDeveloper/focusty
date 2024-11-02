@@ -217,7 +217,7 @@ const deleteImage = async () => {
     padding: 10px 7px;
     min-width: 270px;
     margin: 5px;
-    border-radius: 15px;
+    border-radius: 8px;
   }
   .intro {
     flex: 1;
@@ -280,7 +280,7 @@ const deleteImage = async () => {
   width: 200px;
   padding: 7px 10px;
   border: 2px solid #eee;
-  border-radius: 7px;
+  border-radius: 4px;
   margin-bottom: 15px;
   font-size: 18px;
   &:hover {
@@ -308,7 +308,7 @@ const deleteImage = async () => {
     padding: 7px 5px;
     font-size: 20px;
     width: 100%;
-    border-radius: 5px;
+    border-radius: 4px;
     border-bottom: 1px solid transparent;
     &:focus-visible {
       outline: none;
@@ -332,7 +332,7 @@ const deleteImage = async () => {
     background: #ff889c18;
     padding: 7px 10px;
     transition: all 0.3s ease-in-out;
-    border-radius: 7px;
+    border-radius: 4px;
     margin: 15px 0;
     border: 2px solid transparent;
     font-size: 18px;

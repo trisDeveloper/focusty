@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar">
     <div class="nav">
-      <button class="menu-button" @click="toggleSidebar($event)">
+      <button class="menu-button" aria-label="Menu" @click="toggleSidebar($event)">
         <font-awesome-icon icon="bars" />
       </button>
       <div class="date">{{ today }}</div>
@@ -55,6 +55,16 @@
           >
         </li>
       </ul>
+      <a
+        class="about-link"
+        @click="toggleSidebar"
+        style="display: inline-block; width: 100%"
+        href="https://github.com/trisDeveloper/focusty"
+        ><div>About Focusty</div>
+        <div :style="{ color: '#979fa7', fontSize: '14px', padding: '4px 0' }">
+          Learn more on GitHub
+        </div>
+      </a>
     </div>
   </nav>
 </template>
@@ -124,6 +134,11 @@ onUnmounted(() => {
     font-size: 21px;
     color: #ddd;
   }
+  @media (max-width: 600px) {
+    .date {
+      display: none;
+    }
+  }
 }
 
 .profile-icon {
@@ -158,6 +173,9 @@ onUnmounted(() => {
 }
 
 .sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   position: fixed;
   top: 60px;
   left: 0;
@@ -195,6 +213,17 @@ onUnmounted(() => {
           color: #dadada;
         }
       }
+    }
+  }
+  .about-link {
+    padding: 15px;
+    transition: 0.3s all ease-out;
+    text-decoration: none;
+    color: #ddd;
+    transition: all 0.3s ease;
+    &:hover {
+      text-decoration: underline;
+      background-color: #25252580;
     }
   }
 }

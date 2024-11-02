@@ -24,7 +24,7 @@ export const useStore = defineStore('storeId', {
       repeatParameters: null,
       repeatId: null,
       done: false,
-      color: '#232323',
+      color: '#555555',
       user: null
     },
     timepic: {

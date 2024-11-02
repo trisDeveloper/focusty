@@ -8,11 +8,11 @@ const colors = [
   '#3B82F6', // Bright Blue
   '#D8B4FE', // Lavender Purple
   '#A78BFA', // Soft Violet Purple
-  '#FCA5A5', // Light Red
+  '#ff7575', // Light Red
   '#F9A8D4', // Soft Pink
   '#FDBA74', // Peachy Orange
   '#FFF26E', // Sunny Yellow
-  '#232323' // gray
+  '#555555' // gray
 ]
 const saveColor = (color) => {
   store.setSelectedTask({ ...store.selectedTask, color })

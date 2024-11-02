@@ -209,7 +209,7 @@ const closeThisOrAll = (event) => {
 
 const handleSaveThisOrAll = () => {
   const tasksWithSameRepeatId = tasks.value.filter(
-    (t) => t.repeatId === store.selectedTask.repeatId
+    (t) => t.repeatId === store.selectedTask.repeatId && t.repeatId != null
   )
   const localTasks = JSON.parse(localStorage.getItem('tasks')) || []
   let index =
@@ -255,7 +255,7 @@ const openTaskCard = (event, task, day) => {
         repeatParameters: null,
         repeatId: null,
         done: false,
-        color: '#232323',
+        color: '#555555',
         user: localStorage.getItem('userId') || null
       })
     }, 0)
@@ -401,7 +401,7 @@ fetchData()
   width: 150px;
   padding: 4px;
   transform: translate(-50%, -50%);
-  border-radius: 6px;
+  border-radius: 4px;
   background: linear-gradient(165deg, rgb(32, 32, 32), #181818);
   border: 1px solid #303030;
   z-index: 10;

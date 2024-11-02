@@ -22,7 +22,7 @@ export const repeatTask = (store, prams, start, tasks) => {
           )
             return
 
-          const currentDate = new Date(startDate)
+          const currentDate = new Date(tempDate)
           const daysToAdd = (day - currentDate.getDay() + 7) % 7
           currentDate.setDate(currentDate.getDate() + daysToAdd)
 
@@ -72,6 +72,6 @@ export const repeatTask = (store, prams, start, tasks) => {
     nextTaskId++
   })
   // Update localStorage
-  localStorage.setItem('nextTaskId', nextTaskId)
+  localStorage.setItem('nextTaskId', nextTaskId++)
   localStorage.setItem('tasks', JSON.stringify(tasks))
 }

@@ -31,7 +31,7 @@ const resetToToday = () => {
         <font-awesome-icon icon="fa-solid fa-chevron-right" />
       </div>
     </div>
-    <button @click="resetToToday" title="Today" class="today">Today</button>
+    <button @click="resetToToday" class="today" name="today">Today</button>
   </div>
 </template>
 

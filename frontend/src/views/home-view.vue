@@ -48,7 +48,7 @@ watch(
       min-height: calc(100vh - 120px);
       .day {
         width: 100%;
-        border-radius: 10px;
+        border-radius: 4px;
       }
     }
   }

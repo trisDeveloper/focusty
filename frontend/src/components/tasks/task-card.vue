@@ -4,6 +4,7 @@ import taskRepeat from './task-repeat-card.vue'
 import taskColorCard from './task-color-card.vue'
 import { updateTaskDoneStatus } from '@/utils/update-task-done.js'
 import { useStore } from '@/stores'
+import { ref, watch, nextTick } from 'vue'
 const props = defineProps([
   'fetchData',
   'task',
@@ -14,7 +15,7 @@ const props = defineProps([
   'deleteThisOrAll'
 ])
 const store = useStore()
-
+const titleInput = ref(null)
 const deleteTask = async (task, deleteThisOrAll) => {
   try {
     props.closeTaskCard()
@@ -83,6 +84,16 @@ const updateTaskDescription = (event) => {
   store.selectedTask.description = event.target.value
 }
 
+watch(
+  () => store.isopencard,
+  async (newVal) => {
+    if (newVal) {
+      await nextTick()
+      titleInput.value?.focus()
+    }
+  }
+)
+
 props.fetchData()
 </script>
 
@@ -132,6 +143,7 @@ props.fetchData()
         class="task-title"
         v-model="store.selectedTask.title"
         @input="updateTaskTitle"
+        ref="titleInput"
         @keyup.enter="props.handleSaveThisOrAll"
         placeholder="Title"
       />
@@ -148,7 +160,7 @@ props.fetchData()
       >
         <template #default="{ togglePopover }">
           <div>
-            <button class="date-btn" @click="() => togglePopover()">
+            <button class="date-btn" @click="() => togglePopover()" name="date">
               <span
                 ><font-awesome-icon icon="fa-solid fa-calendar-days" />{{
                   store.selectedTask.date

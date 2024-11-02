@@ -182,7 +182,7 @@ onUnmounted(() => {
 
       <div class="time">{{ formatTime(timeLeft) }}</div>
       <div class="actions">
-        <button @click="togglePause" class="pause">
+        <button @click="togglePause" class="pause" aria-label="Pause pomodoro">
           <font-awesome-icon v-if="!paused" icon="fa-solid fa-pause" />
           <font-awesome-icon v-else icon="fa-solid fa-forward-step" />
         </button>
@@ -199,7 +199,7 @@ onUnmounted(() => {
   position: relative;
   max-width: 650px;
   border: 2px solid rgba(255, 255, 255, 0.031372549);
-  border-radius: 8px;
+  border-radius: 4px;
   padding: 7px;
   margin-top: 50px;
   * {
@@ -232,7 +232,7 @@ onUnmounted(() => {
   width: 400px;
   max-width: calc(100% - 10px);
   transform: translate(-50%, -50%);
-  border-radius: 10px;
+  border-radius: 4px;
   padding: 20px;
   background-color: #0b0c0d;
   border: 1px solid #222;
@@ -280,7 +280,7 @@ onUnmounted(() => {
   text-align: center;
   padding: 15px 0;
   background: #16181a82;
-  border-radius: 8px;
+  border-radius: 4px;
   .sessions {
     display: flex;
     justify-content: center;
