@@ -5,6 +5,11 @@
 
 Focusty is a full-stack productivity app built with Vue, Vite, Python, and Django, integrating Pomodoro techniques, advanced task management, and insightful analytics for anyone aiming for peak productivity.
 
+## Distinctiveness and Complexity
+
+The app stands out by integrating multiple productivity features into one cohesive platform, offering a seamless experience tailored for focused time management.
+The application uses Django for the backend and Vue.js for the frontend, along with JWT authentication for security and user data management. Building Focusty involved complex state management, asynchronous task updates, and interactive, real-time UI elements that enhance usability, making it both distinctive and technically challenging.
+
 ## Features 🛠️
 
 - **Pomodoro Timer**: Boost your productivity with a fully customizable Pomodoro timer, meticulously engineered for focus and efficiency.
@@ -62,6 +67,40 @@ link: https://trisdeveloper.github.io/focusty/
 ### Analytics 📊
 
 - **Journey Page**: Visualize your productivity journey with sophisticated line charts, meticulously charting task completion and Pomodoro focus time over the past week.
+
+## Running Focusty
+The application is live and accessible at this [link](https://trisdeveloper.github.io/focusty/), ready for immediate use. If you'd like to run Focusty locally:
+
+- **Clone the Repository**: Use ` git clone https://github.com/trisDeveloper/focusty ` to get the project files.
+- **Run Backend**: `cd focusty/backend/ `
+    - Set up a virtual environment `python3 -m venv venv && source venv/bin/activate` (optional but recommended)
+    - Install dependencies `pip install -r requirements.txt`
+    - Apply Django migrations `cd focusty/ && python manage.py makemigrations focusty_app && python manage.py migrate`
+    - Run the Django development server `python manage.py runserver`
+      
+  The backend should now be accessible at `http://127.0.0.1:8000`.
+- **Run Frontend**: `cd focusty/frontend/ `
+    - Install dependencies `npm install`
+    - Run the Vue development server `npm run dev`
+      
+  The frontend should now be accessible at the provided local server link, typically `http://localhost:5173/focusty#/`.
+
+## Files Structure
+### Backend
+- **settings.py**: Configuration settings for the Django project, including database setup and installed apps.
+- **urls.py**: URL routing for the application, mapping URL patterns to views.
+- **views.py**: Contains the logic for handling requests and returning responses for the API.
+- **models.py**: Defines the data models for the application (e.g., User, Task).
+- **serializers.py**: Serializers for converting complex data types, such as querysets, into JSON format.
+- **requirements.txt**: Lists the Python packages required to run the backend.
+### Frontend
+- **main.js**: The entry point for the Vue.js application, setting up the Vue instance.
+- **App.vue**: The root component of the application, containing the main layout and structure.
+- **components/**: Directory containing reusable Vue components (e.g., TaskList, TaskCard, NavMenu).
+- **views/**: Directory containing the different views for the application (e.g., HomeView, CalendarView, PomodoroView).
+- **router.js**: Defines the routing for the Vue application, mapping URLs to components.
+- **store.js**: Pinia store setup for state management across components.
+- **package.json**: Contains metadata about the project and lists npm dependencies.
 
 ## Development Process 🤔
 
