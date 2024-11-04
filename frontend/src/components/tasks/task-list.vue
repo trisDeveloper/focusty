@@ -18,7 +18,7 @@
       />
       <div>
         <div v-if="task.time" class="task-time">
-          {{ task.time }}
+          {{ task.time.slice(0, 5) }}
         </div>
         <p>{{ task.title }}</p>
       </div>
