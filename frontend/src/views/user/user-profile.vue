@@ -93,7 +93,7 @@ const logout = () => {
     Cookies.remove('refresh')
     router.push('/')
 
-    window.location.href = '/'
+    window.location.href = '/focusty/'
   }
 }
 const deleteImage = async () => {
